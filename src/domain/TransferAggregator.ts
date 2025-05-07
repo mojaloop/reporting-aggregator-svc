@@ -36,7 +36,7 @@ export class TransferAggregator implements IAggregator {
     }
 
     this.isRunning = false;
-    await this.deps.knexClient.destroy();
+    // await this.deps.knexClient.destroy();
     this.deps.logger.info('Transfer Aggregator is stopped');
   }
 

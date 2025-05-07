@@ -8,60 +8,74 @@ const config = convict<AppConfig>({
     default: 'info',
     env: 'LOG_LEVEL',
   },
-  mysql: {
-    host: {
-      doc: 'MySQL host',
-      format: String,
+  REPORTING_MYSQL_DB: {
+    HOST: {
+      doc: 'The Hostname/IP address of database',
+      format: '*',
       default: 'localhost',
-      env: 'MYSQL_HOST',
+      env: 'REPORTING_MYSQL_DB_HOST',
     },
-    port: {
-      doc: 'MySQL port',
+    PORT: {
+      doc: 'The port of database',
       format: 'port',
       default: 3306,
-      env: 'MYSQL_PORT',
+      env: 'REPORTING_MYSQL_DB_PORT',
     },
-    user: {
-      doc: 'MySQL user',
-      format: String,
+    USER: {
+      doc: 'The username for database',
+      format: '*',
       default: 'central_ledger',
-      env: 'MYSQL_USER',
+      env: 'REPORTING_MYSQL_DB_USER',
     },
-    password: {
-      doc: 'MySQL password',
-      format: String,
+    PASSWORD: {
+      doc: 'The password for database',
+      format: '*',
       default: 'password',
-      env: 'MYSQL_PASSWORD',
+      env: 'REPORTING_MYSQL_DB_PASSWORD',
       sensitive: true,
     },
-    database: {
-      doc: 'MySQL database',
-      format: String,
+    SCHEMA: {
+      doc: 'The schema in database',
+      format: '*',
       default: 'central_ledger',
-      env: 'MYSQL_DATABASE',
-    },
-    connectionLimit: {
-      doc: 'MySQL connection pool limit',
-      format: Number,
-      default: 4,
+      env: 'REPORTING_MYSQL_DB_SCHEMA',
     },
   },
-  mongo: {
-    uri: {
-      doc: 'MongoDB URI',
-      format: String,
-      default: 'mongodb://localhost:27017',
-      env: 'MONGO_URI',
+  REPORTING_MONGO_DB: {
+    HOST: {
+      doc: 'The Hostname/IP address of database',
+      format: '*',
+      default: 'localhost',
+      env: 'REPORTING_MONGO_DB_HOST',
     },
-    dbName: {
-      doc: 'MongoDB database name',
-      format: String,
-      default: 'reporting',
-      env: 'MONGO_DB',
+    PORT: {
+      doc: 'The port number of database',
+      format: 'port',
+      default: 27017,
+      env: 'REPORTING_MONGO_DB_PORT',
+    },
+    USER: {
+      doc: 'The user of database',
+      format: '*',
+      default: 'test',
+      env: 'REPORTING_MONGO_DB_USER',
+    },
+    PASSWORD: {
+      doc: 'The password of database',
+      format: '*',
+      default: 'test123',
+      env: 'REPORTING_MONGO_DB_PASSWORD',
+      sensitive: true,
+    },
+    DATABASE: {
+      doc: 'The database name in database',
+      format: '*',
+      default: 'admin',
+      env: 'REPORTING_MONGO_DB_DATABASE',
     },
   },
-  app: {
-    batchSize: {
+  APP: {
+    BATCH_SIZE: {
       doc: 'Number of transferStateChangeIds to process per batch',
       format: Number,
       default: 10000,

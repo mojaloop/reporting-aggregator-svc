@@ -1,10 +1,16 @@
+import config from '../config';
 import knex, { Knex } from 'knex';
-import Config from '../config';
 
 export function initializeMySQLClient(): Knex {
   return knex({
     client: 'mysql2',
-    connection: Config.get('mysql'),
-    pool: { min: 0, max: Config.get('mysql.connectionLimit') },
+    connection: {
+      host: config.get('REPORTING_MYSQL_DB.HOST'),
+      port: config.get('REPORTING_MYSQL_DB.PORT'),
+      user: config.get('REPORTING_MYSQL_DB.USER'),
+      password: config.get('REPORTING_MYSQL_DB.PASSWORD'),
+      database: config.get('REPORTING_MYSQL_DB.SCHEMA'),
+    },
+    pool: { min: 0, max: 4 }, // Default pool size, as no DB_CONNECTION_LIMIT provided
   });
 }

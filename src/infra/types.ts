@@ -3,20 +3,22 @@ import { HEALTH_STATUSES } from '../constants';
 
 export type AppConfig = {
   LOG_LEVEL: string;
-  mysql: {
-    host: string;
-    port: number;
-    user: string;
-    password: string;
-    database: string;
-    connectionLimit: number;
+  REPORTING_MYSQL_DB: {
+    HOST: string;
+    PORT: number;
+    USER: string;
+    PASSWORD: string;
+    SCHEMA: string;
   };
-  mongo: {
-    uri: string;
-    dbName: string;
+  REPORTING_MONGO_DB: {
+    HOST: string;
+    PORT: number;
+    USER: string;
+    PASSWORD: string;
+    DATABASE: string;
   };
-  app: {
-    batchSize: number;
+  APP: {
+    BATCH_SIZE: number;
   };
 };
 

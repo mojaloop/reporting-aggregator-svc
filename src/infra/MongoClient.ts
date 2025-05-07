@@ -1,8 +1,17 @@
-import mongoose from 'mongoose';
-import Config from '../config';
+import { connect } from 'mongoose';
+import config from '../config';
 
 export async function initializeMongoClient(): Promise<void> {
-  await mongoose.connect(Config.get('mongo.uri'), {
-    dbName: Config.get('mongo.dbName'),
+  const mongoConfig = config.get('REPORTING_MONGO_DB');
+  console.log('mongoConfig', mongoConfig);
+  const userPass =
+    mongoConfig.USER && mongoConfig.PASSWORD
+      ? `${encodeURIComponent(mongoConfig.USER)}:${encodeURIComponent(mongoConfig.PASSWORD)}@`
+      : '';
+  const uri = `mongodb://${userPass}${mongoConfig.HOST}:${mongoConfig.PORT}/${mongoConfig.DATABASE}`;
+
+  await connect(uri, {
+    autoIndex: false,
+    dbName: mongoConfig.DATABASE,
   });
 }

@@ -1,3 +1,3 @@
 export * from './types';
-// Mysql client functions
-// MongoDB client functions
+export * from './MongoClient';
+export * from './MySQLClient';

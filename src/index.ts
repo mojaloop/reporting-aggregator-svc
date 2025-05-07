@@ -1,13 +1,25 @@
+import { IAggDeps, TransferAggregator } from './domain';
+import { startingProcess, logger } from './utils';
+import { StateModel, TransactionModel } from './schemas';
+import { initializeMySQLClient, initializeMongoClient } from './infra';
 import config from './config';
-import { TransferAggregator } from './domain';
-import { startingProcess } from './utils';
 
 let transferAggregator: TransferAggregator;
 // FX Transfer Aggregator
 // Settlement Aggregator
 
 const start = async () => {
-  transferAggregator = new TransferAggregator(config);
+  await initializeMongoClient();
+  const knexClient = initializeMySQLClient();
+
+  const deps: IAggDeps = {
+    knexClient,
+    transactionModel: TransactionModel,
+    stateModel: StateModel,
+    batchSize: config.get('app.batchSize'),
+    logger,
+  };
+  transferAggregator = new TransferAggregator(deps);
   await transferAggregator.start();
   // TODO: Same with FxTransferAggregator and SettlementAggregator
 };

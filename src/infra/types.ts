@@ -3,6 +3,21 @@ import { HEALTH_STATUSES } from '../constants';
 
 export type AppConfig = {
   LOG_LEVEL: string;
+  mysql: {
+    host: string;
+    port: number;
+    user: string;
+    password: string;
+    database: string;
+    connectionLimit: number;
+  };
+  mongo: {
+    uri: string;
+    dbName: string;
+  };
+  app: {
+    batchSize: number;
+  };
 };
 
 type Status = (typeof HEALTH_STATUSES)[keyof typeof HEALTH_STATUSES];

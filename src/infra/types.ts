@@ -17,9 +17,7 @@ export type AppConfig = {
     PASSWORD: string;
     DATABASE: string;
   };
-  APP: {
-    BATCH_SIZE: number;
-  };
+  BATCH_SIZE: number;
 };
 
 type Status = (typeof HEALTH_STATUSES)[keyof typeof HEALTH_STATUSES];

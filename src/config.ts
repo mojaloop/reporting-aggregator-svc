@@ -74,13 +74,11 @@ const config = convict<AppConfig>({
       env: 'REPORTING_MONGO_DB_DATABASE',
     },
   },
-  APP: {
-    BATCH_SIZE: {
-      doc: 'Number of transferStateChangeIds to process per batch',
-      format: Number,
-      default: 10000,
-      env: 'BATCH_SIZE',
-    },
+  BATCH_SIZE: {
+    doc: 'Number of transferStateChangeIds to process per batch',
+    format: Number,
+    default: 10000,
+    env: 'BATCH_SIZE',
   },
 });
 

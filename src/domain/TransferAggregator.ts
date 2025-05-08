@@ -1,5 +1,4 @@
 import { IAggregator, IAggDeps, TransferStateChange, Record, ProcessedData, KnexRawResult } from '../types';
-import { ITransaction, IState } from '../schemas';
 
 export class TransferAggregator implements IAggregator {
   private isRunning: boolean = false;
@@ -158,7 +157,7 @@ export class TransferAggregator implements IAggregator {
         }
 
         const batchTransferIds = [...new Set(transferStateChanges.map((row) => row.transferId))];
-        // @ts-ignore
+        // @ts-expect-error{transferStateChanges is undefined}
         const newLastId = transferStateChanges[transferStateChanges.length - 1].transferStateChangeId;
 
         if (!batchTransferIds.length) {

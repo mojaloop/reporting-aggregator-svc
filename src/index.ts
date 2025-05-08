@@ -19,7 +19,7 @@ const start = async () => {
     knexClient,
     transactionModel: TransactionModel,
     stateModel: StateModel,
-    batchSize: config.get('APP.BATCH_SIZE'),
+    batchSize: config.get('BATCH_SIZE'),
     logger,
   };
   transferAggregator = new TransferAggregator(deps);

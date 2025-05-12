@@ -1,15 +1,15 @@
 import { IAggDeps, TransferAggregator } from './domain';
 import { startingProcess, logger } from './utils';
-import { StateModel, TransactionModel } from './schemas';
+import { SettlementModel, StateModel, TransactionModel } from './schemas';
 import { initializeMySQLClient, initializeMongoClient } from './infra';
 import config from './config';
 import mongoose from 'mongoose';
 import { Knex } from 'knex';
+import { SettlementAggregator } from './domain/SettlementAggregator';
 
 let knexClient: Knex;
 let transferAggregator: TransferAggregator;
-// FX Transfer Aggregator
-// Settlement Aggregator
+let settlementAggregator: SettlementAggregator;
 
 const start = async () => {
   await initializeMongoClient();
@@ -19,17 +19,19 @@ const start = async () => {
     knexClient,
     transactionModel: TransactionModel,
     stateModel: StateModel,
+    settlementModel: SettlementModel,
     batchSize: config.get('BATCH_SIZE'),
+    timeout: config.get('LOOP_TIMEOUT'),
     logger,
   };
   transferAggregator = new TransferAggregator(deps);
-  await transferAggregator.start();
-  // TODO: Same with FxTransferAggregator and SettlementAggregator
+  settlementAggregator = new SettlementAggregator(deps);
+  await Promise.all([transferAggregator.start(), settlementAggregator.start()]);
 };
 
 const stop = async () => {
   try {
-    await transferAggregator?.stop();
+    await Promise.all([transferAggregator?.stop(), settlementAggregator?.stop()]);
     await knexClient?.destroy();
     logger.info('MySQL connection closed');
     await mongoose.disconnect();
@@ -38,7 +40,6 @@ const stop = async () => {
     logger.error('Error during shutdown', error);
     throw error;
   }
-  // TODO: Same with FxTransferAggregator and SettlementAggregator
 };
 
 startingProcess(start, stop);

@@ -127,6 +127,23 @@ export interface ITransaction {
   conversions: IConversion[];
 }
 
+export interface ISettlement {
+  settlementStateChangeId: number;
+  settlementId: number;
+  createdAt: Date;
+  lastUpdatedAt: Date;
+  settlementStatus?: string | null;
+  settlementModel?: string | null;
+  settlementWindows: Array<{
+    settlementWindowId: number;
+  }>;
+  settlementStateChange: Array<{
+    reason?: string | null;
+    status?: string | null;
+    dateTime?: Date;
+  }>;
+}
+
 export interface IState {
   process: string;
   lastId: number;
@@ -140,7 +157,7 @@ const PartySchema = new Schema<IParty>(
     partyName: String,
     supportedCurrencies: String,
   },
-  { _id: false, versionKey: false }
+  { _id: false, versionKey: false },
 );
 
 const QuoteRequestSchema = new Schema<IQuoteRequest>(
@@ -156,7 +173,7 @@ const QuoteRequestSchema = new Schema<IQuoteRequest>(
       amount: Number,
     },
   },
-  { _id: false, versionKey: false }
+  { _id: false, versionKey: false },
 );
 
 const TransferTermsSchema = new Schema<ITransferTerms>(
@@ -184,7 +201,7 @@ const TransferTermsSchema = new Schema<ITransferTerms>(
     },
     ilpPacket: String,
   },
-  { _id: false, versionKey: false }
+  { _id: false, versionKey: false },
 );
 
 const ConversionTermsSchema = new Schema<IConversionTerms>(
@@ -219,7 +236,7 @@ const ConversionTermsSchema = new Schema<IConversionTerms>(
     ],
     ilpPacket: String,
   },
-  { _id: false, versionKey: false }
+  { _id: false, versionKey: false },
 );
 
 const ConversionSchema = new Schema<IConversion>(
@@ -241,7 +258,7 @@ const ConversionSchema = new Schema<IConversion>(
     conversionSettlementWindowId: Number,
     conversionTerms: ConversionTermsSchema,
   },
-  { _id: false, versionKey: false }
+  { _id: false, versionKey: false },
 );
 
 const TransactionSchema = new Schema<ITransaction>(
@@ -287,7 +304,7 @@ const TransactionSchema = new Schema<ITransaction>(
     transferTerms: TransferTermsSchema,
     conversions: [ConversionSchema],
   },
-  { versionKey: false, timestamps: false }
+  { versionKey: false, timestamps: false },
 );
 
 const StateSchema = new Schema<IState>(
@@ -296,8 +313,33 @@ const StateSchema = new Schema<IState>(
     lastId: { type: Number, required: true },
     updatedAt: { type: Date, default: Date.now },
   },
-  { versionKey: false }
+  { versionKey: false },
+);
+
+const SettlementSchema = new Schema<ISettlement>(
+  {
+    settlementStateChangeId: { type: Number, required: true },
+    settlementId: { type: Number, required: true, unique: true },
+    createdAt: { type: Date, required: true },
+    lastUpdatedAt: { type: Date, required: true },
+    settlementStatus: String,
+    settlementModel: String,
+    settlementWindows: [
+      {
+        settlementWindowId: Number,
+      },
+    ],
+    settlementStateChange: [
+      {
+        reason: String,
+        status: String,
+        dateTime: Date,
+      },
+    ],
+  },
+  { collection: 'settlement', strict: false },
 );
 
 export const TransactionModel: Model<ITransaction> = model<ITransaction>('Transaction', TransactionSchema);
 export const StateModel: Model<IState> = model<IState>('State', StateSchema);
+export const SettlementModel: Model<ISettlement> = model<ISettlement>('Settlement', SettlementSchema);

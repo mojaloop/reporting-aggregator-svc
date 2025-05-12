@@ -152,7 +152,8 @@ export class TransferAggregator implements IAggregator {
           .limit(this.deps.batchSize);
 
         if (!transferStateChanges.length) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          // Configurable with env var
+          await new Promise((resolve) => setTimeout(resolve, this.deps.timeout));
           continue;
         }
 
@@ -304,7 +305,9 @@ export class TransferAggregator implements IAggregator {
         }
       } catch (error) {
         this.deps.logger.error(`Error in ${this.processName}`, error);
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+      }
+      finally {
+        await new Promise((resolve) => setTimeout(resolve, this.deps.timeout));
       }
     }
   }

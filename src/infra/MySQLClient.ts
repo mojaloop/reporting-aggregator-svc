@@ -11,6 +11,6 @@ export function initializeMySQLClient(): Knex {
       password: config.get('REPORTING_MYSQL_DB.PASSWORD'),
       database: config.get('REPORTING_MYSQL_DB.SCHEMA'),
     },
-    pool: { min: 0, max: 4 }, // Default pool size, as no DB_CONNECTION_LIMIT provided
+    pool: { min: 10, max: 10 }, // Default pool size, as no DB_CONNECTION_LIMIT provided
   });
 }

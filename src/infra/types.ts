@@ -18,6 +18,7 @@ export type AppConfig = {
     DATABASE: string;
   };
   BATCH_SIZE: number;
+  LOOP_TIMEOUT: number;
 };
 
 type Status = (typeof HEALTH_STATUSES)[keyof typeof HEALTH_STATUSES];

@@ -1,7 +1,7 @@
 import { Knex } from 'knex';
 import { LogMethods, LogContext } from '../utils/types';
 import { Model } from 'mongoose';
-import { IState, ITransaction } from '../schemas';
+import { ISettlement, IState, ITransaction } from '../schemas';
 
 export interface IAggregator {
   start: () => Promise<void>;
@@ -14,7 +14,9 @@ export type IAggDeps = {
   knexClient: Knex;
   transactionModel: Model<ITransaction>;
   stateModel: Model<IState>;
+  settlementModel: Model<ISettlement>;
   batchSize: number;
+  timeout: number;
   logger: ILogger;
 };
 

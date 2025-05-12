@@ -80,6 +80,12 @@ const config = convict<AppConfig>({
     default: 10000,
     env: 'BATCH_SIZE',
   },
+  LOOP_TIMEOUT: {
+    doc: 'Loop timeout (in milliseconds) before the next states are fetched.',
+    format: Number,
+    default: 5000,
+    env: 'LOOP_TIMEOUT',
+  },
 });
 
 config.validate({ allowed: 'strict' });

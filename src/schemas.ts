@@ -74,7 +74,7 @@ interface IConversionTerms {
   ilpPacket?: string;
 }
 
-interface IConversion {
+export interface IConversion {
   conversionRequestId?: string;
   conversionId?: string;
   conversionCommitRequestId?: string;
@@ -129,13 +129,13 @@ export interface ITransaction {
 
 export interface ISettlement {
   settlementStateChangeId: number;
-  settlementId: number;
+  settlementId: bigint;
   createdAt: Date;
   lastUpdatedAt: Date;
   settlementStatus?: string | null;
   settlementModel?: string | null;
   settlementWindows: Array<{
-    settlementWindowId: number;
+    settlementWindowId: bigint;
   }>;
   settlementStateChange: Array<{
     reason?: string | null;
@@ -318,15 +318,16 @@ const StateSchema = new Schema<IState>(
 
 const SettlementSchema = new Schema<ISettlement>(
   {
-    settlementStateChangeId: { type: Number, required: true },
-    settlementId: { type: Number, required: true, unique: true },
+    settlementStateChangeId: { type: Number, required: true }, // Not in nifi data , will remove if not required
+    settlementId: { type: Schema.Types.BigInt, required: true, unique: true }, // Should be INT64
     createdAt: { type: Date, required: true },
     lastUpdatedAt: { type: Date, required: true },
     settlementStatus: String,
     settlementModel: String,
     settlementWindows: [
       {
-        settlementWindowId: Number,
+        settlementWindowId: Schema.Types.BigInt,
+        _id: false,
       },
     ],
     settlementStateChange: [
@@ -334,10 +335,11 @@ const SettlementSchema = new Schema<ISettlement>(
         reason: String,
         status: String,
         dateTime: Date,
+        _id: false,
       },
     ],
   },
-  { collection: 'settlement', strict: false },
+  { collection: 'settlement', strict: false, versionKey: false },
 );
 
 export const TransactionModel: Model<ITransaction> = model<ITransaction>('Transaction', TransactionSchema);

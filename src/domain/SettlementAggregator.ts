@@ -1,4 +1,4 @@
-import { IAggregator, IAggDeps, KnexRawResult } from '../types';
+import { IAggregator, IAggDeps } from '../types';
 import { ISettlement } from '../schemas';
 
 interface SettlementStateChange {
@@ -8,7 +8,7 @@ interface SettlementStateChange {
 }
 
 interface SettlementDetail {
-  settlementId: number;
+  settlementId: bigint;
   createdAt: string;
   lastUpdated: string;
   settlementStatus?: string;
@@ -17,7 +17,7 @@ interface SettlementDetail {
 }
 
 interface SettlementWindow {
-  settlementWindowId: number;
+  settlementWindowId: bigint;
 }
 
 export class SettlementAggregator implements IAggregator {
@@ -64,13 +64,13 @@ export class SettlementAggregator implements IAggregator {
 
   private async processRecord(
     detail: SettlementDetail,
-    windowIds: number[],
+    windowIds: bigint[],
     stateChangeId: number,
   ): Promise<ISettlement | null> {
     if (!detail.settlementId) return null;
 
     return {
-      settlementStateChangeId: stateChangeId,
+      settlementStateChangeId: stateChangeId, // Remove if not required as not present in nifi data
       settlementId: detail.settlementId,
       createdAt: detail.createdAt ? new Date(detail.createdAt) : new Date(),
       lastUpdatedAt: detail.lastUpdated ? new Date(detail.lastUpdated) : new Date(),
@@ -136,12 +136,14 @@ export class SettlementAggregator implements IAggregator {
         for (const row of settlementStateChanges) {
           const { settlementId, settlementStateId, settlementStateChangeId } = row;
 
+          // Get settlement details
           const detailsResult = await this.deps.knexClient.raw(detailsQuery, [settlementStateId, settlementId]);
           const detail: SettlementDetail = detailsResult[0][0];
           if (!detail) continue;
 
+          // Get settlement windows
           const windowsResult = await this.deps.knexClient.raw(windowQuery, [settlementId]);
-          const windowIds: number[] = windowsResult[0].map((w: SettlementWindow) => w.settlementWindowId);
+          const windowIds: bigint[] = windowsResult[0].map((w: SettlementWindow) => w.settlementWindowId);
 
           const processedData = await this.processRecord(detail, windowIds, settlementStateChangeId);
 

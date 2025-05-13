@@ -6,10 +6,12 @@ import config from './config';
 import mongoose from 'mongoose';
 import { Knex } from 'knex';
 import { SettlementAggregator } from './domain/SettlementAggregator';
+import { FxTransferAggregator } from './domain/FxTransferAggregator';
 
 let knexClient: Knex;
 let transferAggregator: TransferAggregator;
 let settlementAggregator: SettlementAggregator;
+let fxTransferAggregator: FxTransferAggregator;
 
 const start = async () => {
   await initializeMongoClient();
@@ -26,12 +28,13 @@ const start = async () => {
   };
   transferAggregator = new TransferAggregator(deps);
   settlementAggregator = new SettlementAggregator(deps);
-  await Promise.all([transferAggregator.start(), settlementAggregator.start()]);
+  fxTransferAggregator = new FxTransferAggregator(deps);
+  await Promise.all([settlementAggregator.start()]);
 };
 
 const stop = async () => {
   try {
-    await Promise.all([transferAggregator?.stop(), settlementAggregator?.stop()]);
+    await Promise.all([transferAggregator?.stop(), settlementAggregator?.stop(), fxTransferAggregator?.stop()]);
     await knexClient?.destroy();
     logger.info('MySQL connection closed');
     await mongoose.disconnect();

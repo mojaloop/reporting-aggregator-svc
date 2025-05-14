@@ -1,3 +1,4 @@
+import { IConversion } from '#src/schemas';
 import { IAggregator, IAggDeps } from '../types';
 
 interface FxTransferStateChange {
@@ -7,46 +8,47 @@ interface FxTransferStateChange {
 
 interface ProcessedConversionRecord {
   transferId: string;
-  conversions?: any;
-  fxTransferStateChangeId?: number;
-  commitRequestId?: string;
+  conversions: {
+    payer?: IConversion;
+    payee?: IConversion;
+  };
+  fxTransferStateChangeId: number;
 }
 
 interface ConversionRecord {
   transferId: string;
-  conversionRequestId?: string;
-  conversionId?: string;
-  conversionCommitRequestId?: string;
-  conversionState?: string;
-  conversionSettlementWindowId?: number;
-  conversionTermsConversionId?: string;
-  conversionTermsDeterminingTransferId?: string;
-  conversionTermsInitiatingFsp?: string;
-  conversionTermsCounterPartyFsp?: string;
-  conversionTermsAmountType?: string;
-  conversionTermsSourceAmount?: number;
-  conversionTermsSourceCurrency?: string;
-  conversionTermsTargetAmount?: number;
-  conversionTermsTargetCurrency?: string;
-  conversionTermsExpiration?: string;
-  conversionStateChangesState?: string;
-  conversionStateChangesReason?: string;
-  conversionStateChangesDateTime?: string;
-  ilpPacket?: string;
-  conversionType?: string;
-  counterPartyProxy?: string;
-  counterPartyFsp?: string;
-  fxTransferStateChangeId?: number;
-  commitRequestId?: string;
+  conversionRequestId: string;
+  conversionId: string;
+  conversionCommitRequestId: string;
+  conversionState: string;
+  conversionSettlementWindowId: number;
+  conversionTermsConversionId: string;
+  conversionTermsDeterminingTransferId: string;
+  conversionTermsInitiatingFsp: string;
+  conversionTermsCounterPartyFsp: string;
+  conversionTermsAmountType: string;
+  conversionTermsSourceAmount: number;
+  conversionTermsSourceCurrency: string;
+  conversionTermsTargetAmount: number;
+  conversionTermsTargetCurrency: string;
+  conversionTermsExpiration: string;
+  conversionStateChangesState: string;
+  conversionStateChangesReason: string;
+  conversionStateChangesDateTime: string;
+  ilpPacket: string;
+  conversionType: string;
+  counterPartyProxy: string;
+  counterPartyFsp: string;
+  fxTransferStateChangeId: number;
 }
 
 interface ChargeRecord {
   determiningTransferId: string;
-  chargeType?: string;
-  sourceAmount?: number;
-  sourceCurrency?: string;
-  targetAmount?: number;
-  targetCurrency?: string;
+  chargeType: string;
+  sourceAmount: number;
+  sourceCurrency: string;
+  targetAmount: number;
+  targetCurrency: string;
 }
 
 export class FxTransferAggregator implements IAggregator {
@@ -101,6 +103,7 @@ export class FxTransferAggregator implements IAggregator {
 
     return {
       transferId: conv.transferId,
+      fxTransferStateChangeId: conv.fxTransferStateChangeId,
       conversions: {
         [conversionSide]: {
           counterPartyProxy: conv.counterPartyProxy?.trim() || null,
@@ -112,21 +115,21 @@ export class FxTransferAggregator implements IAggregator {
           conversionType: conv.conversionType?.trim() || null,
           conversionSettlementWindowId: Number(conv.conversionSettlementWindowId || 0),
           conversionTerms: {
-            conversionId: conv.conversionTermsConversionId?.trim() || null,
-            determiningTransferId: conv.conversionTermsDeterminingTransferId?.trim() || null,
-            initiatingFsp: conv.conversionTermsInitiatingFsp?.trim() || null,
-            counterPartyFsp: conv.conversionTermsCounterPartyFsp?.trim() || null,
             amountType: conv.conversionTermsAmountType?.trim() || null,
-            sourceAmount: {
-              currency: conv.conversionTermsSourceCurrency?.trim() || null,
-              amount: Number(conv.conversionTermsSourceAmount || 0),
-            },
-            targetAmount: {
-              currency: conv.conversionTermsTargetCurrency?.trim() || null,
-              amount: Number(conv.conversionTermsTargetAmount || 0),
-            },
+            conversionId: conv.conversionTermsConversionId?.trim() || null,
+            counterPartyFsp: conv.conversionTermsCounterPartyFsp?.trim() || null,
+            determiningTransferId: conv.conversionTermsDeterminingTransferId?.trim() || null,
             expiration: conv.conversionTermsExpiration ? new Date(conv.conversionTermsExpiration) : undefined,
             ilpPacket: conv.ilpPacket?.trim() || null,
+            initiatingFsp: conv.conversionTermsInitiatingFsp?.trim() || null,
+            sourceAmount: {
+              amount: Number(conv.conversionTermsSourceAmount || 0),
+              currency: conv.conversionTermsSourceCurrency?.trim() || null,
+            },
+            targetAmount: {
+              amount: Number(conv.conversionTermsTargetAmount || 0),
+              currency: conv.conversionTermsTargetCurrency?.trim() || null,
+            },
             charges: charges.map((c) => ({
               chargeType: c.chargeType?.trim() || null,
               sourceAmount: {
@@ -142,16 +145,12 @@ export class FxTransferAggregator implements IAggregator {
           conversionStateChanges: [
             {
               conversionState: conv.conversionStateChangesState?.trim() || null,
-              dateTime: conv.conversionStateChangesDateTime
-                ? new Date(conv.conversionStateChangesDateTime)
-                : undefined,
+              dateTime: conv.conversionStateChangesDateTime ? new Date(conv.conversionStateChangesDateTime) : undefined,
               reason: conv.conversionStateChangesReason?.trim() || null,
             },
           ],
         },
       },
-      fxTransferStateChangeId: conv.fxTransferStateChangeId,
-      commitRequestId: conv.commitRequestId,
     };
   }
 
@@ -160,25 +159,25 @@ export class FxTransferAggregator implements IAggregator {
       .findOne({ process: this.processName })
       .then((doc) => (doc ? doc.lastId : 0));
 
-    // while (this.isRunning) {
-    try {
-      const fxStateChanges: FxTransferStateChange[] = await this.deps
-        .knexClient('fxTransferStateChange')
-        .select('fxTransferStateChangeId', 'commitRequestId')
-        .where('fxTransferStateChangeId', '>', lastId)
-        .orderBy('fxTransferStateChangeId')
-        .limit(this.deps.batchSize);
+    while (this.isRunning) {
+      try {
+        const fxStateChanges: FxTransferStateChange[] = await this.deps
+          .knexClient('fxTransferStateChange')
+          .select('fxTransferStateChangeId', 'commitRequestId')
+          .where('fxTransferStateChangeId', '>', lastId)
+          .orderBy('fxTransferStateChangeId')
+          .limit(this.deps.batchSize);
 
-      if (!fxStateChanges.length) {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        // continue;
-      }
+        if (!fxStateChanges.length) {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          continue;
+        }
 
-      // @ts-expect-error { Object might be undefined }
-      const newLastId = fxStateChanges[fxStateChanges.length - 1].fxTransferStateChangeId;
-      const mongoBatch: ProcessedConversionRecord[] = [];
+        // @ts-expect-error { Object might be undefined }
+        const newLastId = fxStateChanges[fxStateChanges.length - 1].fxTransferStateChangeId;
+        const mongoBatch = [];
 
-      const conversionQuery = `
+        const conversionQuery = `
           SELECT 
             ft.determiningTransferId as transferId,
             fqct.conversionRequestId as conversionRequestId,
@@ -203,8 +202,7 @@ export class FxTransferAggregator implements IAggregator {
             ftt.name as conversionType,
             CASE WHEN cp.isProxy = 1 THEN cp.name ELSE NULL END as counterPartyProxy,
             CASE WHEN cp.isProxy = 0 THEN cp.name ELSE ep.name END as counterPartyFsp,
-            ftsc.fxTransferStateChangeId,
-            ft.commitRequestId
+            ftsc.fxTransferStateChangeId
           FROM fxTransfer ft
           JOIN fxQuoteConversionTerms fqct ON fqct.conversionId = ft.commitRequestId
           JOIN fxQuoteResponseConversionTerms fqrct ON fqrct.conversionId = ft.commitRequestId
@@ -224,7 +222,7 @@ export class FxTransferAggregator implements IAggregator {
           LIMIT 1;
         `;
 
-      const chargesQuery = `
+        const chargesQuery = `
           SELECT
             ft.determiningTransferId,
             fc.chargeType,
@@ -237,42 +235,51 @@ export class FxTransferAggregator implements IAggregator {
           WHERE ft.commitRequestId = ?;
         `;
 
-      for (const row of fxStateChanges) {
-        const { fxTransferStateChangeId, commitRequestId } = row;
+        for (const row of fxStateChanges) {
+          const { fxTransferStateChangeId, commitRequestId } = row;
 
-        const convResult = await this.deps.knexClient.raw(conversionQuery, [commitRequestId, fxTransferStateChangeId]);
-        const conv: ConversionRecord = convResult[0][0];
-        if (!conv) continue;
+          const convResult = await this.deps.knexClient.raw(conversionQuery, [
+            commitRequestId,
+            fxTransferStateChangeId,
+          ]);
+          const conv: ConversionRecord = convResult[0][0];
+          if (!conv) continue;
 
-        const chargesResult = await this.deps.knexClient.raw(chargesQuery, [commitRequestId]);
-        const charges: ChargeRecord[] = chargesResult[0];
+          const chargesResult = await this.deps.knexClient.raw(chargesQuery, [commitRequestId]);
+          const charges: ChargeRecord[] = chargesResult[0];
 
-        const processedData = await this.processRecord({ ...conv, fxTransferStateChangeId, commitRequestId }, charges);
-        if (processedData) {
-          mongoBatch.push(processedData);
+          const processedData = await this.processRecord(conv, charges);
+          if (processedData) {
+            mongoBatch.push({
+              updateOne: {
+                filter: { transferId: processedData.transferId },
+                update: { $set: processedData },
+                upsert: true,
+              },
+            });
+          }
         }
-      }
 
-      if (mongoBatch.length > 0) {
-        try {
-          await this.deps.transactionModel.insertMany(mongoBatch);
-          this.deps.logger.info(`Inserted ${mongoBatch.length} documents into conversions collection`);
-        } catch (error) {
-          this.deps.logger.error(`Bulk insert failed for ${this.processName}`, error);
+        if (mongoBatch.length > 0) {
+          try {
+            await this.deps.transactionModel.bulkWrite(mongoBatch);
+            this.deps.logger.info(`Inserted ${mongoBatch.length} documents into conversions collection`);
+          } catch (error) {
+            this.deps.logger.error(`Bulk insert failed for ${this.processName}`, error);
+          }
         }
-      }
 
-      await this.deps.stateModel.updateOne(
-        { process: this.processName },
-        { $set: { lastId: newLastId, updatedAt: new Date() } },
-        { upsert: true },
-      );
-      lastId = newLastId;
-      this.deps.logger.info(`Processed up to fxTransferStateChangeId ${lastId}`);
-    } catch (error) {
-      this.deps.logger.error(`Error in ${this.processName}`, error);
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+        await this.deps.stateModel.updateOne(
+          { process: this.processName },
+          { $set: { lastId: newLastId, updatedAt: new Date() } },
+          { upsert: true },
+        );
+        lastId = newLastId;
+        this.deps.logger.info(`Processed up to fxTransferStateChangeId ${lastId}`);
+      } catch (error) {
+        this.deps.logger.error(`Error in ${this.processName}`, error);
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+      }
     }
-    // }
   }
 }

@@ -1,4 +1,5 @@
-import { IAggregator, IAggDeps, TransferStateChange, Record, ProcessedData, KnexRawResult } from '../types';
+import { ITransaction } from '#src/schemas';
+import { IAggregator, IAggDeps, TransferStateChange, Record, KnexRawResult } from '../types';
 
 export class TransferAggregator implements IAggregator {
   private isRunning: boolean = false;
@@ -43,28 +44,27 @@ export class TransferAggregator implements IAggregator {
     return this.deps;
   }
 
-  private async processRecord(record: Record): Promise<ProcessedData | null> {
+  private async processRecord(record: Record): Promise<ITransaction | null> {
     if (!record.amount || record.amount <= 0) return null;
 
-    const stateChange = record.transferStateChangeState
-      ? {
-        transferState: record.transferStateChangeState,
-        reason: record.transferStateChangeReason,
-        dateTime: record.transferStateChangeDateTime,
-      }
-      : null;
+    const stateChange = {
+      dateTime: record.transferStateChangeDateTime,
+      reason: record.transferStateChangeReason,
+      transferState: record.transferStateChangeState,
+    };
 
     return {
       transferId: record.transferId,
       transactionId: record.transactionId,
-      sourceAmount: record.sourceAmount,
-      sourceCurrency: record.sourceCurrency,
-      targetAmount: record.targetAmount,
-      targetCurrency: record.targetCurrency,
+      sourceAmount: record.sourceAmount ? record.sourceAmount : record.amount,
+      sourceCurrency: record.sourceCurrency ? record.sourceCurrency : record.currency,
+      targetAmount: record.targetAmount ? record.targetAmount : record.amount,
+      targetCurrency: record.targetCurrency ? record.targetCurrency : record.currency,
       createdAt: record.createdAt,
-      lastUpdated: new Date(),
+      baseUseCase: record.baseUseCase,
+      lastUpdated: record.transferStateChangeDateTime,
       transferState: stateChange ? stateChange.transferState : '',
-      transferStateChanges: stateChange ? [stateChange] : [],
+      transferStateChanges: [stateChange],
       transactionType: record.transactionType,
       errorCode: record.errorCode,
       transferSettlementWindowId: record.transferSettlementWindowId,
@@ -88,42 +88,42 @@ export class TransferAggregator implements IAggregator {
         partyIdType: record.payerPartyIdType,
         partyIdentifier: record.payerPartyIdentifier,
         partyName: record.payerPartyName,
-        supportedCurrencies: record.currency,
+        supportedCurrencies: '', // TODO: Map supportedCurrencies in the future
       },
       payeeParty: {
         partyIdType: record.payeePartyIdType,
         partyIdentifier: record.payeePartyIdentifier,
         partyName: record.payeePartyName,
-        supportedCurrencies: record.currency,
+        supportedCurrencies: '', // TODO: Map supportedCurrencies in the future
       },
       quoteRequest: {
         quoteId: record.quoteId,
         amountType: record.quoteRequestAmountType,
         amount: {
           currency: record.quoteRequestCurrency,
-          amount: record.quoteRequestAmount,
+          amount: record.quoteRequestAmount ? record.quoteRequestAmount : 0,
         },
         fees: {
-          currency: record.transferTermsPayeeFspFeeCurrency,
-          amount: record.transferTermsPayeeFspFeeAmount,
+          currency: '', // No mapping available at the moment
+          amount: 0, // No mapping available at the moment
         },
       },
       transferTerms: {
         transferAmount: {
-          currency: record.currency,
-          amount: record.amount,
+          currency: record.transferTermsTransferCurrency,
+          amount: record.transferTermsTransferAmount,
         },
         payeeReceiveAmount: {
           currency: record.transferTermsPayeeReceiveCurrency,
-          amount: record.transferTermsPayeeReceiveAmount,
+          amount: record.transferTermsPayeeReceiveAmount ? record.transferTermsPayeeReceiveAmount : 0,
         },
         payeeFspFee: {
           currency: record.transferTermsPayeeFspFeeCurrency,
-          amount: record.transferTermsPayeeFspFeeAmount,
+          amount: record.transferTermsPayeeFspFeeAmount ? record.transferTermsPayeeFspFeeAmount : 0,
         },
         payeeFspCommission: {
           currency: record.transferTermsPayeeFspCommissionCurrency,
-          amount: record.transferTermsPayeeFspCommissionAmount,
+          amount: record.transferTermsPayeeFspCommissionAmount ? record.transferTermsPayeeFspCommissionAmount : 0,
         },
         expiration: record.transferTermsExpiration,
         geoCode: {
@@ -132,7 +132,6 @@ export class TransferAggregator implements IAggregator {
         },
         ilpPacket: record.ilpPacket,
       },
-      conversions: [],
     };
   }
 
@@ -171,7 +170,7 @@ export class TransferAggregator implements IAggregator {
           continue;
         }
 
-        const rawResult = await this.deps.knexClient.raw(
+        const rawResult = (await this.deps.knexClient.raw(
           `
           SELECT 
             transfer.transferId,
@@ -221,7 +220,12 @@ export class TransferAggregator implements IAggregator {
             ppc.change as positionChangesChange,
             tf.settlementWindowId as transferSettlementWindowId,
             gc.latitude as geoCodeLatitude,
-            gc.longitude as geoCodeLongitude
+            gc.longitude as geoCodeLongitude,
+            CASE
+              WHEN q.transactionRequestId IS NULL AND ft.commitRequestId IS NOT NULL THEN 'P2P WITH FX'
+              WHEN q.transactionRequestId IS NULL THEN 'P2P'
+              ELSE 'R2P'
+            END AS baseUseCase 
           FROM transfer
             INNER JOIN transferParticipant AS tp1 ON tp1.transferId = transfer.transferId
             LEFT JOIN externalParticipant AS ep1 ON ep1.externalParticipantId = tp1.externalParticipantId
@@ -261,7 +265,7 @@ export class TransferAggregator implements IAggregator {
           ORDER BY tsc.transferStateChangeId
           `,
           batchTransferIds,
-        ) as KnexRawResult;
+        )) as KnexRawResult;
 
         const records: Record[] = rawResult[0];
 
@@ -305,8 +309,7 @@ export class TransferAggregator implements IAggregator {
         }
       } catch (error) {
         this.deps.logger.error(`Error in ${this.processName}`, error);
-      }
-      finally {
+      } finally {
         await new Promise((resolve) => setTimeout(resolve, this.deps.timeout));
       }
     }

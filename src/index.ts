@@ -29,7 +29,7 @@ const start = async () => {
   transferAggregator = new TransferAggregator(deps);
   settlementAggregator = new SettlementAggregator(deps);
   fxTransferAggregator = new FxTransferAggregator(deps);
-  await Promise.all([settlementAggregator.start()]);
+  await Promise.all([transferAggregator.start(), settlementAggregator.start(), fxTransferAggregator.start()]);
 };
 
 const stop = async () => {

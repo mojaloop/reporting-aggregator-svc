@@ -9,10 +9,10 @@ interface SettlementStateChange {
 
 interface SettlementDetail {
   settlementId: bigint;
-  createdAt: string;
-  lastUpdated: string;
-  settlementStatus?: string;
-  settlementModel?: string;
+  createdAt: Date;
+  lastUpdated: Date;
+  settlementStatus: string;
+  settlementModel: string;
   reason?: string;
 }
 
@@ -65,23 +65,21 @@ export class SettlementAggregator implements IAggregator {
   private async processRecord(
     detail: SettlementDetail,
     windowIds: bigint[],
-    stateChangeId: number,
   ): Promise<ISettlement | null> {
     if (!detail.settlementId) return null;
 
     return {
-      settlementStateChangeId: stateChangeId, // Remove if not required as not present in nifi data
       settlementId: detail.settlementId,
-      createdAt: detail.createdAt ? new Date(detail.createdAt) : new Date(),
-      lastUpdatedAt: detail.lastUpdated ? new Date(detail.lastUpdated) : new Date(),
-      settlementStatus: detail.settlementStatus?.trim() || null,
-      settlementModel: detail.settlementModel?.trim() || null,
+      createdAt: detail.createdAt,
+      lastUpdatedAt: detail.lastUpdated,
+      settlementStatus: detail.settlementStatus.trim(),
+      settlementModel: detail.settlementModel.trim(),
       settlementWindows: windowIds.map((id) => ({ settlementWindowId: id })),
       settlementStateChange: [
         {
-          reason: detail.reason?.trim() || null,
-          status: detail.settlementStatus?.trim() || null,
-          dateTime: detail.lastUpdated ? new Date(detail.lastUpdated) : undefined,
+          reason: detail.reason?.trim(),
+          status: detail.settlementStatus?.trim(),
+          dateTime: detail.lastUpdated,
         },
       ],
     };
@@ -134,7 +132,7 @@ export class SettlementAggregator implements IAggregator {
         `;
 
         for (const row of settlementStateChanges) {
-          const { settlementId, settlementStateId, settlementStateChangeId } = row;
+          const { settlementId, settlementStateId } = row;
 
           // Get settlement details
           const detailsResult = await this.deps.knexClient.raw(detailsQuery, [settlementStateId, settlementId]);
@@ -145,7 +143,7 @@ export class SettlementAggregator implements IAggregator {
           const windowsResult = await this.deps.knexClient.raw(windowQuery, [settlementId]);
           const windowIds: bigint[] = windowsResult[0].map((w: SettlementWindow) => w.settlementWindowId);
 
-          const processedData = await this.processRecord(detail, windowIds, settlementStateChangeId);
+          const processedData = await this.processRecord(detail, windowIds);
 
           if (processedData) {
             mongoBatch.push({

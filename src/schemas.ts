@@ -298,7 +298,7 @@ const TransactionSchema = new Schema<ITransaction>(
       payee: ConversionSchema,
     },
   },
-  { versionKey: false, timestamps: false },
+  { collection: 'transaction', versionKey: false, timestamps: false },
 );
 
 const StateSchema = new Schema<IState>(
@@ -332,7 +332,7 @@ const SettlementSchema = new Schema<ISettlement>(
       },
     ],
   },
-  { collection: 'settlements', strict: false, versionKey: false },
+  { collection: 'settlement', strict: false, versionKey: false },
 );
 
 export const TransactionModel: Model<ITransaction> = model<ITransaction>('Transaction', TransactionSchema);

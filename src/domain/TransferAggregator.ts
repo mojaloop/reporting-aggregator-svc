@@ -60,7 +60,7 @@ export class TransferAggregator implements IAggregator {
       sourceCurrency: record.sourceCurrency ? record.sourceCurrency : record.currency,
       targetAmount: record.targetAmount ? record.targetAmount : record.amount,
       targetCurrency: record.targetCurrency ? record.targetCurrency : record.currency,
-      createdAt: record.createdAt,
+      createdAt: new Date(record.createdAt.toISOString()),
       baseUseCase: record.baseUseCase,
       lastUpdated: record.transferStateChangeDateTime,
       transferState: stateChange ? stateChange.transferState : '',

@@ -7,6 +7,7 @@ import { IAggDeps } from '../../../src/types';
 import mysql from 'mysql2/promise';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { testData } from '../data/testData';
 
 // Test configuration
 const mysqlConfig = {
@@ -15,6 +16,7 @@ const mysqlConfig = {
   user: 'root',
   password: '',
   database: 'test_central_ledger',
+  timezone: 'Z',
 };
 
 const mongoConfig = {
@@ -26,10 +28,10 @@ const mongoConfig = {
 };
 const execPromise = promisify(exec);
 
-async function importSqlDump() {
+async function importSqlDump(dumpFile: string) {
   try {
     const { stdout, stderr } = await execPromise(
-      'docker exec -i integration-mysql-1 mysql -u root test_central_ledger < ./data/transfer_dump.sql'
+      `docker exec -i integration-mysql-1 mysql -u root test_central_ledger < ./data/${dumpFile}`,
     );
     logger.info('SQL dump imported successfully:', stdout);
     if (stderr) logger.warn('Warnings:', stderr);
@@ -101,13 +103,11 @@ describe('TransferAggregator Integration Tests with Dockerized Databases', () =>
     await rootConnection.query(`DROP DATABASE IF EXISTS ${mysqlConfig.database}`);
     await rootConnection.query(`CREATE DATABASE ${mysqlConfig.database}`);
     await rootConnection.end();
-
   });
 
   test('should process transferStateChange records from dump and insert 6 transfers into transaction collection', async () => {
- 
     // Import SQL dump
-    await importSqlDump();   
+    await importSqlDump('transfer_dump.sql');
 
     // Start aggregator
     aggregator.start();
@@ -126,5 +126,58 @@ describe('TransferAggregator Integration Tests with Dockerized Databases', () =>
     const state = await StateModel.findOne({ process: 'transactions_process' }).lean();
     expect(state).toBeTruthy();
     expect(state!.lastId).toBeGreaterThanOrEqual(40); // Ensure all 40 transferStateChange records were processed
+  }, 15000);
+
+  test('should process transferStateChange records from dump and insert 1 transfer into transaction collection', async () => {
+    // Import SQL dump
+    await importSqlDump('1_transfer_dump.sql');
+
+    // Start aggregator
+    aggregator.start();
+
+    // Wait for processing (batchSize=2, allow enough time for 40 records)
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    // Stop aggregator
+    await aggregator.stop();
+
+    // Verify MongoDB transaction collection
+    const transactions = await TransactionModel.find({ transferId: 'ab1c283a-760e-4bdd-b2c0-6d84a409f339' }).lean();
+    expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
+
+    // Compare the retrieved transaction with testData, excluding _id
+    const retrievedTransaction = transactions[0];
+    // Only use data without _id, as _id will differ
+    // Not sure why retrievedTransaction doesn't have _id when spread but have _id when compared as it is
+    const { ...transactionWithoutId } = retrievedTransaction;
+    expect(transactionWithoutId).toMatchObject(testData);
+
+    // Verify state collection
+    const state = await StateModel.findOne({ process: 'transactions_process' }).lean();
+    expect(state).toBeTruthy();
+    expect(state!.lastId).toBeGreaterThanOrEqual(20); // Ensure all 40 transferStateChange records were processed
+  }, 15000);
+
+  test('should process transferStateChange records from dump and insert 0 transfers into transaction collection', async () => {
+    // Import SQL dump
+    await importSqlDump('no_transfer_dump.sql');
+
+    // Start aggregator
+    aggregator.start();
+
+    // Wait for processing (batchSize=2, allow enough time for 40 records)
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    // Stop aggregator
+    await aggregator.stop();
+
+    // Verify MongoDB transaction collection
+    const transactions = await TransactionModel.find().lean();
+    expect(transactions).toHaveLength(0); // Expect exactly 0 transfers
+
+    // Verify state collection
+    const state = await StateModel.findOne({ process: 'transactions_process' }).lean();
+    expect(state).toBeTruthy();
+    expect(state!.lastId).toBeGreaterThanOrEqual(16); // Ensure all 40 transferStateChange records were processed
   }, 15000);
 });

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/56</span>
+                <span class='fraction'>0/57</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/51</span>
+                <span class='fraction'>0/52</span>
             </div>
         
             
@@ -304,9 +304,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -387,21 +384,14 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -409,7 +399,17 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -479,10 +479,7 @@ interface SettlementWindow {
 <span class="cstat-no" title="statement not covered" >    return this.deps;</span>
   }
 &nbsp;
-  private <span class="fstat-no" title="function not covered" >async </span>processRecord(
-    detail: SettlementDetail,
-    windowIds: bigint[],
-  ): Promise&lt;ISettlement | null&gt; {
+  private <span class="fstat-no" title="function not covered" >async </span>processRecord(detail: SettlementDetail, windowIds: bigint[]): Promise&lt;ISettlement | null&gt; {
 <span class="cstat-no" title="statement not covered" >    <span class="missing-if-branch" title="if path not taken" >I</span>if (!detail.settlementId) <span class="cstat-no" title="statement not covered" >return null;</span></span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    return {</span>
@@ -517,12 +514,12 @@ interface SettlementWindow {
           .limit(this.deps.batchSize);
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if (!settlementStateChanges.length) {</span>
-<span class="cstat-no" title="statement not covered" >          await new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve) =&gt; <span class="cstat-no" title="statement not covered" >setTimeout(resolve, 1000))</span>;</span>
+<span class="cstat-no" title="statement not covered" >          await new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve) =&gt; <span class="cstat-no" title="statement not covered" >setTimeout(resolve, this.deps.timeout))</span>;</span>
 <span class="cstat-no" title="statement not covered" >          continue;</span>
         }
 &nbsp;
         // @ts-expect-error { Object is possibly "undefined"}
-        const newLastId = <span class="cstat-no" title="statement not covered" >settlementStateChanges[settlementStateChanges.length - 1].settlementStateChangeId;</span>
+        let newLastId = <span class="cstat-no" title="statement not covered" >settlementStateChanges[settlementStateChanges.length - 1].settlementStateChangeId;</span>
         const mongoBatch = <span class="cstat-no" title="statement not covered" >[];</span>
 &nbsp;
         const windowQuery = <span class="cstat-no" title="statement not covered" >`</span>
@@ -549,7 +546,7 @@ interface SettlementWindow {
         `;
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        for (const row of settlementStateChanges) {</span>
-          const { settlementId, settlementStateId } = <span class="cstat-no" title="statement not covered" >row;</span>
+          const { settlementId, settlementStateId, settlementStateChangeId } = <span class="cstat-no" title="statement not covered" >row;</span>
 &nbsp;
           // Get settlement details
           const detailsResult = <span class="cstat-no" title="statement not covered" >await this.deps.knexClient.raw(detailsQuery, [settlementStateId, settlementId]);</span>
@@ -559,6 +556,8 @@ interface SettlementWindow {
           // Get settlement windows
           const windowsResult = <span class="cstat-no" title="statement not covered" >await this.deps.knexClient.raw(windowQuery, [settlementId]);</span>
           const windowIds: bigint[] = <span class="cstat-no" title="statement not covered" >windowsResult[0].map(<span class="fstat-no" title="function not covered" >(w</span>: SettlementWindow) =&gt; <span class="cstat-no" title="statement not covered" >w.settlementWindowId)</span>;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >          newLastId = settlementStateChangeId;</span>
 &nbsp;
           const processedData = <span class="cstat-no" title="statement not covered" >await this.processRecord(detail, windowIds);</span>
 &nbsp;
@@ -586,7 +585,8 @@ interface SettlementWindow {
 <span class="cstat-no" title="statement not covered" >        this.deps.logger.info(`Processed up to settlementStateChangeId ${lastId}`);</span>
       } catch (error) {
 <span class="cstat-no" title="statement not covered" >        this.deps.logger.error(`Error in ${this.processName}`, error);</span>
-<span class="cstat-no" title="statement not covered" >        await new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve) =&gt; <span class="cstat-no" title="statement not covered" >setTimeout(resolve, 5000))</span>;</span>
+      } finally {
+<span class="cstat-no" title="statement not covered" >        await new Promise(<span class="fstat-no" title="function not covered" >(r</span>esolve) =&gt; <span class="cstat-no" title="statement not covered" >setTimeout(resolve, this.deps.timeout))</span>;</span>
       }
     }
   }
@@ -598,7 +598,7 @@ interface SettlementWindow {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-05-15T13:04:04.460Z
+                at 2025-05-16T07:31:28.174Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

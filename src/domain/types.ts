@@ -40,7 +40,7 @@ export interface Record {
   createdAt: Date;
   amount?: number;
   currency?: string;
-  transferStateChangeId?: number;
+  transferStateChangeId: number;
   transferStateChangeState: string;
   transferStateChangeReason?: string;
   transferStateChangeDateTime: Date;
@@ -80,4 +80,6 @@ export interface Record {
   geoCodeLatitude?: number;
   geoCodeLongitude?: number;
 }
+
+// @ts-ignore
 export type KnexRawResult = [Record[], any];

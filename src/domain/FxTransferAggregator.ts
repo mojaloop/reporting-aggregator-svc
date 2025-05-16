@@ -169,12 +169,12 @@ export class FxTransferAggregator implements IAggregator {
           .limit(this.deps.batchSize);
 
         if (!fxStateChanges.length) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, this.deps.timeout));
           continue;
         }
 
         // @ts-expect-error { Object might be undefined }
-        const newLastId = fxStateChanges[fxStateChanges.length - 1].fxTransferStateChangeId;
+        let newLastId = fxStateChanges[fxStateChanges.length - 1].fxTransferStateChangeId;
         const mongoBatch = [];
 
         const conversionQuery = `
@@ -248,6 +248,7 @@ export class FxTransferAggregator implements IAggregator {
           const chargesResult = await this.deps.knexClient.raw(chargesQuery, [commitRequestId]);
           const charges: ChargeRecord[] = chargesResult[0];
 
+          newLastId = row.fxTransferStateChangeId;
           const processedData = await this.processRecord(conv, charges);
           if (processedData) {
             mongoBatch.push({
@@ -278,7 +279,8 @@ export class FxTransferAggregator implements IAggregator {
         this.deps.logger.info(`Processed up to fxTransferStateChangeId ${lastId}`);
       } catch (error) {
         this.deps.logger.error(`Error in ${this.processName}`, error);
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+      } finally {
+        await new Promise((resolve) => setTimeout(resolve, this.deps.timeout));
       }
     }
   }

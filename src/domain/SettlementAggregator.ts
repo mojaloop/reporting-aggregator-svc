@@ -62,10 +62,7 @@ export class SettlementAggregator implements IAggregator {
     return this.deps;
   }
 
-  private async processRecord(
-    detail: SettlementDetail,
-    windowIds: bigint[],
-  ): Promise<ISettlement | null> {
+  private async processRecord(detail: SettlementDetail, windowIds: bigint[]): Promise<ISettlement | null> {
     if (!detail.settlementId) return null;
 
     return {
@@ -100,12 +97,12 @@ export class SettlementAggregator implements IAggregator {
           .limit(this.deps.batchSize);
 
         if (!settlementStateChanges.length) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, this.deps.timeout));
           continue;
         }
 
         // @ts-expect-error { Object is possibly "undefined"}
-        const newLastId = settlementStateChanges[settlementStateChanges.length - 1].settlementStateChangeId;
+        let newLastId = settlementStateChanges[settlementStateChanges.length - 1].settlementStateChangeId;
         const mongoBatch = [];
 
         const windowQuery = `
@@ -132,7 +129,7 @@ export class SettlementAggregator implements IAggregator {
         `;
 
         for (const row of settlementStateChanges) {
-          const { settlementId, settlementStateId } = row;
+          const { settlementId, settlementStateId, settlementStateChangeId } = row;
 
           // Get settlement details
           const detailsResult = await this.deps.knexClient.raw(detailsQuery, [settlementStateId, settlementId]);
@@ -142,6 +139,8 @@ export class SettlementAggregator implements IAggregator {
           // Get settlement windows
           const windowsResult = await this.deps.knexClient.raw(windowQuery, [settlementId]);
           const windowIds: bigint[] = windowsResult[0].map((w: SettlementWindow) => w.settlementWindowId);
+
+          newLastId = settlementStateChangeId;
 
           const processedData = await this.processRecord(detail, windowIds);
 
@@ -169,7 +168,8 @@ export class SettlementAggregator implements IAggregator {
         this.deps.logger.info(`Processed up to settlementStateChangeId ${lastId}`);
       } catch (error) {
         this.deps.logger.error(`Error in ${this.processName}`, error);
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+      } finally {
+        await new Promise((resolve) => setTimeout(resolve, this.deps.timeout));
       }
     }
   }

@@ -158,17 +158,7 @@ export class TransferAggregator implements IAggregator {
 
         const batchTransferIds = [...new Set(transferStateChanges.map((row) => row.transferId))];
         // @ts-expect-error{transferStateChanges is undefined}
-        const newLastId = transferStateChanges[transferStateChanges.length - 1].transferStateChangeId;
-
-        if (!batchTransferIds.length) {
-          await this.deps.stateModel.updateOne(
-            { process: this.processName },
-            { $set: { lastId: newLastId, updatedAt: new Date() } },
-            { upsert: true },
-          );
-          lastId = newLastId;
-          continue;
-        }
+        let newLastId = transferStateChanges[transferStateChanges.length - 1].transferStateChangeId;
 
         const rawResult = (await this.deps.knexClient.raw(
           `
@@ -269,9 +259,12 @@ export class TransferAggregator implements IAggregator {
 
         const records: Record[] = rawResult[0];
 
+        // If there are records
         if (records.length > 0) {
           const bulkOps = [];
+          // Create an array of mongo queries with the processedData
           for (const record of records) {
+            newLastId = record.transferStateChangeId;
             const processedData = await this.processRecord(record);
             if (processedData) {
               bulkOps.push({
@@ -284,6 +277,7 @@ export class TransferAggregator implements IAggregator {
             }
           }
 
+          // Run mongobatch query
           if (bulkOps.length > 0) {
             try {
               await this.deps.transactionModel.bulkWrite(bulkOps);
@@ -291,22 +285,17 @@ export class TransferAggregator implements IAggregator {
               this.deps.logger.error(`Bulk upsert failed for ${this.processName}`, error);
             }
           }
-
-          await this.deps.stateModel.updateOne(
-            { process: this.processName },
-            { $set: { lastId: newLastId, updatedAt: new Date() } },
-            { upsert: true },
-          );
-          lastId = newLastId;
-          this.deps.logger.info(`Processed up to transferStateChangeId ${lastId}`);
-        } else {
-          await this.deps.stateModel.updateOne(
-            { process: this.processName },
-            { $set: { lastId: newLastId, updatedAt: new Date() } },
-            { upsert: true },
-          );
-          lastId = newLastId;
         }
+
+        // Update state id with the last Id
+        await this.deps.stateModel.updateOne(
+          { process: this.processName },
+          { $set: { lastId: newLastId, updatedAt: new Date() } },
+          { upsert: true },
+        );
+        lastId = newLastId;
+
+        this.deps.logger.info(`Processed up to transferStateChangeId ${lastId}`);
       } catch (error) {
         this.deps.logger.error(`Error in ${this.processName}`, error);
       } finally {

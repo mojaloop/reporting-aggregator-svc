@@ -102,11 +102,13 @@ describe('TransferAggregator Integration Tests with Dockerized Databases', () =>
     await rootConnection.query(`CREATE DATABASE ${mysqlConfig.database}`);
     await rootConnection.end();
 
-    // Import SQL dump
-    await importSqlDump();
   });
 
   test('should process transferStateChange records from dump and insert 6 transfers into transaction collection', async () => {
+ 
+    // Import SQL dump
+    await importSqlDump();   
+
     // Start aggregator
     aggregator.start();
 

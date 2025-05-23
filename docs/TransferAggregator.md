@@ -17,10 +17,17 @@ flowchart TD
     
     HasChanges -->|Yes| SetInitialLastId[Set initial newLastId from batch]
     SetInitialLastId --> FetchDetails[Get full transaction details]
-    FetchDetails --> ProcessRecords[Process records one by one]
+    FetchDetails --> RecordsFound{Records found?}
+    
+    RecordsFound -->|Yes| ProcessRecords[Process records one by one]
     ProcessRecords --> UpdateLastId[Update newLastId for each record]
-    UpdateLastId --> SaveToMongo[Save to MongoDB]
-    SaveToMongo --> UpdateState[Save final lastId to MongoDB]
+    UpdateLastId --> BuildBulkOps[Build MongoDB bulk operations]
+    BuildBulkOps --> BulkOpsExist{Bulk ops exist?}
+    BulkOpsExist -->|Yes| SaveToMongo[Save to MongoDB]
+    BulkOpsExist -->|No| UpdateState[Save final lastId to MongoDB]
+    SaveToMongo --> UpdateState
+    
+    RecordsFound -->|No| UpdateState
     UpdateState --> Wait
     
     Stop[Stop] --> SetStopped[Set not running]
@@ -40,9 +47,11 @@ The TransferAggregator processes transactions in these simple steps:
 
 3. **Main Loop**:
    - Get new transfer data from MySQL
-   - Transform data for reporting
-   - Save to MongoDB
-   - Update progress
+   - If detailed records found:
+     - Transform data for reporting
+     - Build MongoDB operations
+     - Save to MongoDB if operations exist
+   - Always update progress with new lastId
    - Wait before checking for more data
 
 4. **Data Handling**:

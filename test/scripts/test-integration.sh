@@ -40,5 +40,5 @@ echo "Integration tests completed."
 
 # Clean up
 echo "Stopping Docker Compose..."
-docker compose -f docker-compose.yml down
+# docker compose -f docker-compose.yml down
 echo "Cleanup complete"

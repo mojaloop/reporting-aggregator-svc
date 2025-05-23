@@ -332,7 +332,7 @@ const SettlementSchema = new Schema<ISettlement>(
       },
     ],
   },
-  { collection: 'settlement', strict: false, versionKey: false },
+  { collection: 'settlement', versionKey: false },
 );
 
 export const TransactionModel: Model<ITransaction> = model<ITransaction>('Transaction', TransactionSchema);

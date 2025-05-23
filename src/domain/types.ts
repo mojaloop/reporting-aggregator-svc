@@ -81,5 +81,5 @@ export interface Record {
   geoCodeLongitude?: number;
 }
 
-// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type KnexRawResult = [Record[], any];

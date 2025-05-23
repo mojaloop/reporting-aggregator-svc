@@ -113,6 +113,3 @@ For detailed documentation on each component, see the docs directory:
 - [Settlement Aggregator](docs/SettlementAggregator.md): Handles settlement processing  
 - [FX Transfer Aggregator](docs/FxTransferAggregator.md): Processes foreign exchange data
 - [Combined Aggregators](docs/Combined-Aggregators.md): How all components work together
-- [LastID Handling](docs/LastIDHandling.md): Details on how the system tracks processing state
-
-

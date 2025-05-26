@@ -1,6 +1,4 @@
-# Reporting Aggregator Service
-
-A reporting service that aggregates transactional data from MySQL by joining multiple tables and composes denormalized records into MongoDB for efficient reporting.
+# Mojaloop Reporting Aggregator Service
 
 ## What This Service Does
 
@@ -77,39 +75,11 @@ sequenceDiagram
 - **Reduced Load**: Takes pressure off the main transaction database
 - **Complete Data**: Captures all aspects of transactions, settlements, and currency exchanges
 
-## Installation & Usage
+## More Information
 
-### Install dependencies
+For more details on each part of the system, see:
+- [TransferAggregator.md](TransferAggregator.md)
+- [SettlementAggregator.md](SettlementAggregator.md)
+- [FxTransferAggregator.md](FxTransferAggregator.md)
+- [Combined-Aggregators.md](Combined-Aggregators.md)
 
-```bash
-npm install
-```
-
-### Build
-
-Command to transpile TypeScript into JS:
-
-```bash
-npm run build
-```
-
-### Run
-
-```bash
-npm start
-```
-
-### Tests
-
-```bash
-npm test
-```
-
-## Documentation
-
-For detailed documentation on each component, see the docs directory:
-
-- [Transfer Aggregator](docs/TransferAggregator.md): Core component for processing transaction data
-- [Settlement Aggregator](docs/SettlementAggregator.md): Handles settlement processing  
-- [FX Transfer Aggregator](docs/FxTransferAggregator.md): Processes foreign exchange data
-- [Combined Aggregators](docs/Combined-Aggregators.md): How all components work together

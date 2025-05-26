@@ -5,13 +5,6 @@ set -e
 
 cd ./test/integration/
 
-# Ensure dump file exists
-DUMP_FILE="data/transfer_dump.sql"
-if [ ! -f "$DUMP_FILE" ]; then
-  echo "Error: $DUMP_FILE not found"
-  exit 1
-fi
-
 # Start Docker Compose
 echo "Starting Docker Compose..."
 docker compose -f docker-compose.yml up -d
@@ -40,5 +33,5 @@ echo "Integration tests completed."
 
 # Clean up
 echo "Stopping Docker Compose..."
-# docker compose -f docker-compose.yml down
+docker compose -f docker-compose.yml down
 echo "Cleanup complete"

@@ -43,7 +43,7 @@ async function importSqlDump(dumpFile: string) {
   }
 }
 
-describe('TransferAggregator Integration Tests with Dockerized Databases', () => {
+describe('Aggregator Service Integration Tests with Dockerized Databases', () => {
   let mysqlConnection: mysql.Pool;
   let knexClient: Knex;
   let deps: IAggDeps;
@@ -85,27 +85,7 @@ describe('TransferAggregator Integration Tests with Dockerized Databases', () =>
     aggregator = new TransferAggregator(deps);
     settlementAggregator = new SettlementAggregator(deps);
     fxAggregator = new FxTransferAggregator(deps);
-
-    // Import SQL dump
-    await importSqlDump('central_ledger_dump.sql');
-
-    // Transfer aggregator uses batching, if the size of the batch is small e.g <100,
-    // It can take time to process the data, 15 sec is alloted for now to make sure
-    // all transfers are processed by the service (increase the time if batch size reduces).
-    aggregator.start();
-    await new Promise((resolve) => setTimeout(resolve, 15000));
-    await aggregator.stop();
-
-    // 5 sec as fxAggregator and settlementAggregator don't depend on batch size
-    // Only hardware can be a constraint for these.
-    fxAggregator.start();
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    await fxAggregator.stop();
-
-    settlementAggregator.start();
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-    await settlementAggregator.stop();
-  }, 60000);
+  }, 5000);
 
   afterAll(async () => {
     // Cleanup
@@ -118,112 +98,200 @@ describe('TransferAggregator Integration Tests with Dockerized Databases', () =>
   // Only use data without _id, as _id will differ
   // Not sure why retrievedTransaction doesn't have _id when spread but have _id when compared as it is
 
-  test('should process single currency transfer with type SEND', async () => {
-    const transactions = await TransactionModel.find({ transferId: '01JVVZ3VGJNN1BY4NK6NWG1FED' }).lean();
-    expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
+  describe('Tests for central_ledger_dump.sql', () => {
+    beforeAll(async () => {
+      // Transfer aggregator uses batching, if the size of the batch is small e.g <100,
+      // It can take time to process the data, 15 sec is alloted for now to make sure
+      // all transfers are processed by the service (increase the time if batch size reduces).
+      await importSqlDump('central_ledger_dump.sql');
+      aggregator.start();
+      await new Promise((resolve) => setTimeout(resolve, 15000));
+      await aggregator.stop();
+      // 5 sec as fxAggregator and settlementAggregator don't depend on batch size
+      // Only hardware can be a constraint for these.
+      fxAggregator.start();
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      await fxAggregator.stop();
 
-    const retrievedTransaction = transactions[0];
-    const { ...transactionWithoutId } = retrievedTransaction;
-    expect(transactionWithoutId).toMatchObject(happyTestData.single_currency_transfer_type_send.transaction);
-  }, 15000);
+      settlementAggregator.start();
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      await settlementAggregator.stop();
+    }, 40000);
 
-  test('should process single currency transfer with type SEND with settlement', async () => {
-    const transactions = await TransactionModel.find({ transferId: '01JVVZ3X9BFSJH1BVHNCZKE14R' }).lean();
-    expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
+    afterAll(async () => {
+      await TransactionModel.deleteMany({});
+      await StateModel.deleteMany({});
+      await SettlementModel.deleteMany({});
+    });
 
-    const retrievedTransaction = transactions[0];
-    const { ...transactionWithoutId } = retrievedTransaction;
-    expect(transactionWithoutId).toMatchObject(
-      happyTestData.single_currency_transfer_type_send_with_settlement.transaction,
-    );
+    test('should process single currency transfer with type SEND', async () => {
+      const transactions = await TransactionModel.find({ transferId: '01JVVZ3VGJNN1BY4NK6NWG1FED' }).lean();
+      expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
 
-    const settlement = await SettlementModel.find({ settlementId: 1 }).lean();
-    expect(settlement).toHaveLength(1);
+      const retrievedTransaction = transactions[0];
+      const { ...transactionWithoutId } = retrievedTransaction;
+      expect(transactionWithoutId).toMatchObject(happyTestData.single_currency_transfer_type_send.transaction);
+    }, 15000);
 
-    const retrievedSettlement = settlement[0];
-    const { ...settlementWithoutId } = retrievedSettlement;
-    expect(settlementWithoutId).toMatchObject(
-      happyTestData.single_currency_transfer_type_send_with_settlement.settlement,
-    );
-  }, 15000);
+    test('should process single currency transfer with type SEND with settlement', async () => {
+      const transactions = await TransactionModel.find({ transferId: '01JVVZ3X9BFSJH1BVHNCZKE14R' }).lean();
+      expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
 
-  test('should process single currency transfer with type RECEIVE', async () => {
-    const transactions = await TransactionModel.find({ transferId: '01JVVYYNASE5P0RW5XK8TNQYT7' }).lean();
-    expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
+      const retrievedTransaction = transactions[0];
+      const { ...transactionWithoutId } = retrievedTransaction;
+      expect(transactionWithoutId).toMatchObject(
+        happyTestData.single_currency_transfer_type_send_with_settlement.transaction,
+      );
 
-    const retrievedTransaction = transactions[0];
-    const { ...transactionWithoutId } = retrievedTransaction;
-    expect(transactionWithoutId).toMatchObject(happyTestData.single_currency_transfer_type_receive.transaction);
-  }, 15000);
+      const settlement = await SettlementModel.find({ settlementId: 1 }).lean();
+      expect(settlement).toHaveLength(1);
 
-  test('should process single currency transfer with type RECEIVE with settlement', async () => {
-    const transactions = await TransactionModel.find({ transferId: '01JVVZ9XD7C0YR5E4QZZBN60Z8' }).lean();
-    expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
+      const retrievedSettlement = settlement[0];
+      const { ...settlementWithoutId } = retrievedSettlement;
+      expect(settlementWithoutId).toMatchObject(
+        happyTestData.single_currency_transfer_type_send_with_settlement.settlement,
+      );
+    }, 15000);
 
-    const retrievedTransaction = transactions[0];
-    const { ...transactionWithoutId } = retrievedTransaction;
-    expect(transactionWithoutId).toMatchObject(
-      happyTestData.single_currency_transfer_type_receive_with_settlement.transaction,
-    );
+    test('should process single currency transfer with type RECEIVE', async () => {
+      const transactions = await TransactionModel.find({ transferId: '01JVVYYNASE5P0RW5XK8TNQYT7' }).lean();
+      expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
 
-    const settlement = await SettlementModel.find({ settlementId: 2 }).lean();
-    expect(settlement).toHaveLength(1);
+      const retrievedTransaction = transactions[0];
+      const { ...transactionWithoutId } = retrievedTransaction;
+      expect(transactionWithoutId).toMatchObject(happyTestData.single_currency_transfer_type_receive.transaction);
+    }, 15000);
 
-    const retrievedSettlement = settlement[0];
-    expect({ ...retrievedSettlement }).toMatchObject(
-      happyTestData.single_currency_transfer_type_receive_with_settlement.settlement,
-    );
-  }, 15000);
+    test('should process single currency transfer with type RECEIVE with settlement', async () => {
+      const transactions = await TransactionModel.find({ transferId: '01JVVZ9XD7C0YR5E4QZZBN60Z8' }).lean();
+      expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
 
-  test('should process fx transfer with type SEND', async () => {
-    const transactions = await TransactionModel.find({ transferId: '01JVVZDGPZ2NQGA7ZJB7XCDK09' }).lean();
-    expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
+      const retrievedTransaction = transactions[0];
+      const { ...transactionWithoutId } = retrievedTransaction;
+      expect(transactionWithoutId).toMatchObject(
+        happyTestData.single_currency_transfer_type_receive_with_settlement.transaction,
+      );
 
-    const retrievedTransaction = transactions[0];
-    const { ...transactionWithoutId } = retrievedTransaction;
-    expect(transactionWithoutId).toMatchObject(happyTestData.fxTransfer_type_send.transaction);
-  }, 15000);
+      const settlement = await SettlementModel.find({ settlementId: 2 }).lean();
+      expect(settlement).toHaveLength(1);
 
-  test('should process fx transfer with type RECEIVE', async () => {
-    const transactions = await TransactionModel.find({ transferId: '01JVW42Z5QTKBHK30VGJ05GGAP' }).lean();
-    expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
+      const retrievedSettlement = settlement[0];
+      expect({ ...retrievedSettlement }).toMatchObject(
+        happyTestData.single_currency_transfer_type_receive_with_settlement.settlement,
+      );
+    }, 15000);
 
-    const retrievedTransaction = transactions[0];
-    const { ...transactionWithoutId } = retrievedTransaction;
-    expect(transactionWithoutId).toMatchObject(happyTestData.fxTransfer_type_receive.transaction);
-  }, 15000);
+    test('should process fx transfer with type SEND', async () => {
+      const transactions = await TransactionModel.find({ transferId: '01JVVZDGPZ2NQGA7ZJB7XCDK09' }).lean();
+      expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
 
-  test('should process fx transfer with type SEND with settlement', async () => {
-    // TODO
-  }, 15000);
+      const retrievedTransaction = transactions[0];
+      const { ...transactionWithoutId } = retrievedTransaction;
+      expect(transactionWithoutId).toMatchObject(happyTestData.fxTransfer_type_send.transaction);
+    }, 15000);
 
-  test('should process fx transfer with type RECEIVE with settlement', async () => {
-    //TODO
-  }, 15000);
+    test('should process fx transfer with type RECEIVE', async () => {
+      const transactions = await TransactionModel.find({ transferId: '01JVW42Z5QTKBHK30VGJ05GGAP' }).lean();
+      expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
 
-  test('should process fx transfer with TIMEOUT', async () => {
-    // TODO
-  }, 15000);
+      const retrievedTransaction = transactions[0];
+      const { ...transactionWithoutId } = retrievedTransaction;
+      expect(transactionWithoutId).toMatchObject(happyTestData.fxTransfer_type_receive.transaction);
+    }, 15000);
 
-  test('should process fx transfer with ABORT', async () => {
-    // TODO
-  }, 15000);
+    test('should process single currency transfer with ABORT', async () => {
+      const transactions = await TransactionModel.find({ transferId: '01JVVZ0SBFX5M7B5M1FQTZ2DSE' }).lean();
+      expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
 
-  test('should process single currency transfer with ABORT', async () => {
-    const transactions = await TransactionModel.find({ transferId: '01JVVZ0SBFX5M7B5M1FQTZ2DSE' }).lean();
-    expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
+      const retrievedTransaction = transactions[0];
+      const { ...transactionWithoutId } = retrievedTransaction;
+      expect(transactionWithoutId).toMatchObject(unhappyTestData.single_currency_abort.transaction);
+    }, 15000);
 
-    const retrievedTransaction = transactions[0];
-    const { ...transactionWithoutId } = retrievedTransaction;
-    expect(transactionWithoutId).toMatchObject(unhappyTestData.single_currency_abort.transaction);
-  }, 15000);
+    test('should process single currency transfer with TIMEOUT ', async () => {
+      const transactions = await TransactionModel.find({ transferId: '01JVVZ0FQYDR1E597MMG006A34' }).lean();
+      expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
 
-  test('should process single currency transfer with TIMEOUT ', async () => {
-    const transactions = await TransactionModel.find({ transferId: '01JVVZ0FQYDR1E597MMG006A34' }).lean();
-    expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
+      const retrievedTransaction = transactions[0];
+      const { ...transactionWithoutId } = retrievedTransaction;
+      expect(transactionWithoutId).toMatchObject(unhappyTestData.single_currency_timeout.transaction);
+    }, 15000);
+  });
 
-    const retrievedTransaction = transactions[0];
-    const { ...transactionWithoutId } = retrievedTransaction;
-    expect(transactionWithoutId).toMatchObject(unhappyTestData.single_currency_timeout.transaction);
-  }, 15000);
+  describe('Tests for central_ledger_dump_FxSettlements.sql', () => {
+    beforeAll(async () => {
+      // Transfer aggregator uses batching, if the size of the batch is small e.g <100,
+      // It can take time to process the data, 15 sec is alloted for now to make sure
+      // all transfers are processed by the service (increase the time if batch size reduces).
+      await importSqlDump('central_ledger_dump_FxSettlements.sql');
+      aggregator.start();
+      await new Promise((resolve) => setTimeout(resolve, 15000));
+      await aggregator.stop();
+      // 5 sec as fxAggregator and settlementAggregator don't depend on batch size
+      // Only hardware can be a constraint for these.
+      fxAggregator.start();
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      await fxAggregator.stop();
+
+      settlementAggregator.start();
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      await settlementAggregator.stop();
+    }, 40000);
+
+    afterAll(async () => {
+      await TransactionModel.deleteMany({});
+      await StateModel.deleteMany({});
+      await SettlementModel.deleteMany({});
+    });
+
+    test('should process fx transfer with type SEND with settlement', async () => {
+      const transactions = await TransactionModel.find({ transferId: '01JW5D7N1M78WRSCN5BZGC8NYW' }).lean();
+      expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
+
+      const retrievedTransaction = transactions[0];
+      const { ...transactionWithoutId } = retrievedTransaction;
+      expect(transactionWithoutId).toMatchObject(happyTestData.fxTransfer_type_send_with_settlement.transaction);
+
+      const settlement = await SettlementModel.find({ settlementId: 1 }).lean();
+      expect(settlement).toHaveLength(1);
+
+      const retrievedSettlement = settlement[0];
+      expect({ ...retrievedSettlement }).toMatchObject(happyTestData.fxTransfer_type_send_with_settlement.settlement);
+    }, 15000);
+
+    test('should process fx transfer with type RECEIVE with settlement', async () => {
+      const transactions = await TransactionModel.find({ transferId: '01JW5DK5AV5YPTN3P37R27FEHJ' }).lean();
+      expect(transactions).toHaveLength(1); // Expect exactly 1 transfer
+
+      const retrievedTransaction = transactions[0];
+      const { ...transactionWithoutId } = retrievedTransaction;
+      expect(transactionWithoutId).toMatchObject(happyTestData.fxTransfer_type_receive_with_settlement.transaction);
+
+      const settlement = await SettlementModel.find({ settlementId: 1 }).lean();
+      expect(settlement).toHaveLength(1);
+
+      const retrievedSettlement = settlement[0];
+      expect({ ...retrievedSettlement }).toMatchObject(
+        happyTestData.fxTransfer_type_receive_with_settlement.settlement,
+      );
+    }, 15000);
+  });
+
+  describe('Tests for central_ledger_dump_2.sql', () => {
+    // TODO:
+    beforeAll(async () => { });
+
+    // afterAll(async () => {
+    //   await TransactionModel.deleteMany({});
+    //   await StateModel.deleteMany({});
+    //   await SettlementModel.deleteMany({});
+    // });
+    test('should process fx transfer with TIMEOUT', async () => {
+      // TODO
+    }, 15000);
+
+    test('should process fx transfer with ABORT', async () => {
+      // TODO
+    }, 15000);
+  });
 });

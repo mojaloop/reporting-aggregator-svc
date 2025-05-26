@@ -635,6 +635,316 @@ export const happyTestData = {
       },
     },
   },
-  fxTransfer_type_send_with_settlement: {},
-  fxTransfer_type_receive_with_settlement: {},
+  fxTransfer_type_send_with_settlement: {
+    transaction: {
+      transferId: '01JW5D7N1M78WRSCN5BZGC8NYW',
+      baseUseCase: 'P2P WITH FX',
+      createdAt: new Date('2025-05-26T04:22:34.000Z'),
+      errorCode: null,
+      lastUpdated: new Date('2025-05-26T04:22:35.000Z'),
+      payeeDFSP: 'ttkfxpayee',
+      payeeDFSPProxy: null,
+      payeeParty: {
+        partyIdType: 'MSISDN',
+        partyIdentifier: '54321001',
+        partyName: null,
+        supportedCurrencies: '',
+      },
+      payerDFSP: 'ttkfxpayer',
+      payerDFSPProxy: null,
+      payerParty: {
+        partyIdType: 'MSISDN',
+        partyIdentifier: '44123456789',
+        partyName: null,
+        supportedCurrencies: '',
+      },
+      positionChanges: [
+        {
+          participantName: 'ttkfxpayee',
+          currency: 'XTS',
+          ledgerType: 'POSITION',
+          dateTime: new Date('2025-05-26T04:22:35.000Z'),
+          updatedPosition: -500,
+          change: -500,
+        },
+      ],
+      quoteRequest: {
+        quoteId: '01JW5D7R25DWS4V2BS09RXE4H0',
+        amountType: 'SEND',
+        amount: {
+          currency: 'XTS',
+          amount: 500,
+        },
+        fees: {
+          currency: '',
+          amount: 0,
+        },
+      },
+      sourceAmount: 10,
+      sourceCurrency: 'XDR',
+      targetAmount: 500,
+      targetCurrency: 'XTS',
+      transactionId: '01JW5D7N1M78WRSCN5BZGC8NYW',
+      transactionType: 'TRANSFER',
+      transferSettlementWindowId: 1,
+      transferState: 'COMMITTED',
+      transferStateChanges: [
+        {
+          transferState: 'COMMITTED',
+          dateTime: new Date('2025-05-26T04:22:35.000Z'),
+          reason: null,
+        },
+      ],
+      transferTerms: {
+        transferAmount: {
+          currency: 'XTS',
+          amount: 500,
+        },
+        payeeReceiveAmount: {
+          currency: 'XTS',
+          amount: 500,
+        },
+        payeeFspFee: {
+          currency: 'XTS',
+          amount: 0.2,
+        },
+        payeeFspCommission: {
+          currency: 'XTS',
+          amount: 0.3,
+        },
+        expiration: new Date('2025-05-27T04:22:29.000Z'),
+        geoCode: {
+          latitude: '+13.78',
+          longitude: '180',
+        },
+        ilpPacket:
+          'AYIDJwAAAAAATEtAHGcudHRrZnhwYXllZS5tc2lzZG4uNTQzMjEwMDGCAv5leUowY21GdWMyRmpkR2x2Ymtsa0lqb2lNREZLVnpWRU4wNHhUVGM0VjFKVFEwNDFRbHBIUXpoT1dWY2lMQ0p4ZFc5MFpVbGtJam9pTURGS1Z6VkVOMUl5TlVSWFV6UldNa0pUTURsU1dFVTBTREFpTENKd1lYbGxaU0k2ZXlKd1lYSjBlVWxrU1c1bWJ5STZleUp3WVhKMGVVbGtWSGx3WlNJNklrMVRTVk5FVGlJc0luQmhjblI1U1dSbGJuUnBabWxsY2lJNklqVTBNekl4TURBeElpd2labk53U1dRaU9pSjBkR3RtZUhCaGVXVmxJbjE5TENKd1lYbGxjaUk2ZXlKd1lYSjBlVWxrU1c1bWJ5STZleUp3WVhKMGVVbGtWSGx3WlNJNklrMVRTVk5FVGlJc0luQmhjblI1U1dSbGJuUnBabWxsY2lJNklqUTBNVEl6TkRVMk56ZzVJaXdpWm5Od1NXUWlPaUowZEd0bWVIQmhlV1Z5SW4wc0luQmxjbk52Ym1Gc1NXNW1ieUk2ZXlKamIyMXdiR1Y0VG1GdFpTSTZleUptYVhKemRFNWhiV1VpT2lKR2FYSnpkRzVoYldVdFZHVnpkQ0lzSW14aGMzUk9ZVzFsSWpvaVRHRnpkRzVoYldVdFZHVnpkQ0o5TENKa1lYUmxUMlpDYVhKMGFDSTZJakU1T0RRdE1ERXRNREVpZlgwc0ltRnRiM1Z1ZENJNmV5SmpkWEp5Wlc1amVTSTZJbGhVVXlJc0ltRnRiM1Z1ZENJNklqVXdNQ0o5TENKMGNtRnVjMkZqZEdsdmJsUjVjR1VpT25zaWMyTmxibUZ5YVc4aU9pSlVVa0ZPVTBaRlVpSXNJbWx1YVhScFlYUnZjaUk2SWxCQldVVlNJaXdpYVc1cGRHbGhkRzl5Vkhsd1pTSTZJa05QVGxOVlRVVlNJbjBzSW1WNGNHbHlZWFJwYjI0aU9pSXlNREkxTFRBMUxUSTNWREEwT2pJeU9qSTVMakkyT1ZvaWZRAA',
+      },
+      conversions: {
+        payer: {
+          conversionCommitRequestId: '01JW5D7N1J11P2B0SD6HD6DNWM',
+          conversionId: '01JW5D7N1J11P2B0SD6HD6DNWM',
+          conversionRequestId: '01JW5D7N0ZFZZSPG8X37A28HYA',
+          conversionSettlementWindowId: 1,
+          conversionState: 'COMMITTED',
+          conversionStateChanges: [
+            {
+              conversionState: 'COMMITTED',
+              dateTime: new Date('2025-05-26T04:22:35.000Z'),
+              reason: null,
+            },
+          ],
+          conversionTerms: {
+            conversionId: '01JW5D7N1J11P2B0SD6HD6DNWM',
+            determiningTransferId: '01JW5D7N1M78WRSCN5BZGC8NYW',
+            initiatingFsp: 'ttkfxpayer',
+            counterPartyFsp: 'ttkfxp1',
+            amountType: 'SEND',
+            sourceAmount: {
+              currency: 'XDR',
+              amount: 10,
+            },
+            targetAmount: {
+              currency: 'XTS',
+              amount: 500,
+            },
+            expiration: new Date('2025-12-25T13:17:10.000Z'),
+            charges: [
+              {
+                chargeType: 'string',
+                sourceAmount: {
+                  currency: 'XDR',
+                  amount: 33,
+                },
+                targetAmount: {
+                  currency: 'XTS',
+                  amount: 6000,
+                },
+              },
+            ],
+            ilpPacket:
+              'AYIDJwAAAAAATEtAHGcudHRrZnhwYXllZS5tc2lzZG4uNTQzMjEwMDGCAv5leUowY21GdWMyRmpkR2x2Ymtsa0lqb2lNREZLVnpWRU4wNHhUVGM0VjFKVFEwNDFRbHBIUXpoT1dWY2lMQ0p4ZFc5MFpVbGtJam9pTURGS1Z6VkVOMUl5TlVSWFV6UldNa0pUTURsU1dFVTBTREFpTENKd1lYbGxaU0k2ZXlKd1lYSjBlVWxrU1c1bWJ5STZleUp3WVhKMGVVbGtWSGx3WlNJNklrMVRTVk5FVGlJc0luQmhjblI1U1dSbGJuUnBabWxsY2lJNklqVTBNekl4TURBeElpd2labk53U1dRaU9pSjBkR3RtZUhCaGVXVmxJbjE5TENKd1lYbGxjaUk2ZXlKd1lYSjBlVWxrU1c1bWJ5STZleUp3WVhKMGVVbGtWSGx3WlNJNklrMVRTVk5FVGlJc0luQmhjblI1U1dSbGJuUnBabWxsY2lJNklqUTBNVEl6TkRVMk56ZzVJaXdpWm5Od1NXUWlPaUowZEd0bWVIQmhlV1Z5SW4wc0luQmxjbk52Ym1Gc1NXNW1ieUk2ZXlKamIyMXdiR1Y0VG1GdFpTSTZleUptYVhKemRFNWhiV1VpT2lKR2FYSnpkRzVoYldVdFZHVnpkQ0lzSW14aGMzUk9ZVzFsSWpvaVRHRnpkRzVoYldVdFZHVnpkQ0o5TENKa1lYUmxUMlpDYVhKMGFDSTZJakU1T0RRdE1ERXRNREVpZlgwc0ltRnRiM1Z1ZENJNmV5SmpkWEp5Wlc1amVTSTZJbGhVVXlJc0ltRnRiM1Z1ZENJNklqVXdNQ0o5TENKMGNtRnVjMkZqZEdsdmJsUjVjR1VpT25zaWMyTmxibUZ5YVc4aU9pSlVVa0ZPVTBaRlVpSXNJbWx1YVhScFlYUnZjaUk2SWxCQldVVlNJaXdpYVc1cGRHbGhkRzl5Vkhsd1pTSTZJa05QVGxOVlRVVlNJbjBzSW1WNGNHbHlZWFJwYjI0aU9pSXlNREkxTFRBMUxUSTNWREEwT2pJeU9qSTVMakkyT1ZvaWZRAA',
+          },
+          conversionType: 'PAYER_CONVERSION',
+          counterPartyFSP: 'ttkfxp1',
+          counterPartyProxy: null,
+        },
+      },
+    },
+    settlement: {
+      settlementId: 1,
+      createdAt: new Date('2025-05-26T04:38:48.000Z'),
+      lastUpdatedAt: new Date('2025-05-26T04:39:10.000Z'),
+      settlementModel: 'DEFERREDNETXXX',
+      settlementStateChange: [
+        {
+          reason: 'All settlement accounts are SETTLED',
+          status: 'SETTLED',
+          dateTime: new Date('2025-05-26T04:39:10.000Z'),
+        },
+      ],
+      settlementStatus: 'SETTLED',
+      settlementWindows: [
+        {
+          settlementWindowId: 1,
+        },
+      ],
+    },
+  },
+  fxTransfer_type_receive_with_settlement: {
+    transaction: {
+      transferId: '01JW5DK5AV5YPTN3P37R27FEHJ',
+      baseUseCase: 'P2P WITH FX',
+      createdAt: new Date('2025-05-26T04:28:49.000Z'),
+      errorCode: null,
+      lastUpdated: new Date('2025-05-26T04:28:51.000Z'),
+      payeeDFSP: 'ttkfxpayee',
+      payeeDFSPProxy: null,
+      payeeParty: {
+        partyIdType: 'MSISDN',
+        partyIdentifier: '54321001',
+        partyName: null,
+        supportedCurrencies: '',
+      },
+      payerDFSP: 'ttkfxpayer',
+      payerDFSPProxy: null,
+      payerParty: {
+        partyIdType: 'MSISDN',
+        partyIdentifier: '44123456789',
+        partyName: null,
+        supportedCurrencies: '',
+      },
+      positionChanges: [
+        {
+          participantName: 'ttkfxpayee',
+          currency: 'XTS',
+          ledgerType: 'POSITION',
+          dateTime: new Date('2025-05-26T04:28:51.000Z'),
+          updatedPosition: -1000,
+          change: -500,
+        },
+      ],
+      quoteRequest: {
+        quoteId: '01JW5DK7JEDDA4NECFEFEQ1R0N',
+        amountType: 'RECEIVE',
+        amount: {
+          currency: 'XTS',
+          amount: 500,
+        },
+        fees: {
+          currency: '',
+          amount: 0,
+        },
+      },
+      sourceAmount: 10,
+      sourceCurrency: 'XDR',
+      targetAmount: 500,
+      targetCurrency: 'XTS',
+      transactionId: '01JW5DK5AV5YPTN3P37R27FEHJ',
+      transactionType: 'TRANSFER',
+      transferSettlementWindowId: 1,
+      transferState: 'COMMITTED',
+      transferStateChanges: [
+        {
+          transferState: 'COMMITTED',
+          dateTime: new Date('2025-05-26T04:28:51.000Z'),
+          reason: null,
+        },
+      ],
+      transferTerms: {
+        transferAmount: {
+          currency: 'XTS',
+          amount: 500.5,
+        },
+        payeeReceiveAmount: {
+          currency: 'XTS',
+          amount: 500,
+        },
+        payeeFspFee: {
+          currency: 'XTS',
+          amount: 0.2,
+        },
+        payeeFspCommission: {
+          currency: 'XTS',
+          amount: 0.3,
+        },
+        expiration: new Date('2025-05-27T04:28:45.000Z'),
+        geoCode: {
+          latitude: '90',
+          longitude: '+130.69',
+        },
+        ilpPacket:
+          'AYID1wAAAAAATF7IHGcudHRrZnhwYXllZS5tc2lzZG4uNTQzMjEwMDGCA65leUowY21GdWMyRmpkR2x2Ymtsa0lqb2lNREZLVnpWRVN6VkJWalZaVUZST00xQXpOMUl5TjBaRlNFb2lMQ0p4ZFc5MFpVbGtJam9pTURGS1Z6VkVTemRLUlVSRVFUUk9SVU5HUlVaRlVURlNNRTRpTENKd1lYbGxaU0k2ZXlKd1lYSjBlVWxrU1c1bWJ5STZleUp3WVhKMGVVbGtWSGx3WlNJNklrMVRTVk5FVGlJc0luQmhjblI1U1dSbGJuUnBabWxsY2lJNklqVTBNekl4TURBeElpd2labk53U1dRaU9pSjBkR3RtZUhCaGVXVmxJbjE5TENKd1lYbGxjaUk2ZXlKd1lYSjBlVWxrU1c1bWJ5STZleUp3WVhKMGVVbGtWSGx3WlNJNklrMVRTVk5FVGlJc0luQmhjblI1U1dSbGJuUnBabWxsY2lJNklqUTBNVEl6TkRVMk56ZzVJaXdpWm5Od1NXUWlPaUowZEd0bWVIQmhlV1Z5SW4wc0luQmxjbk52Ym1Gc1NXNW1ieUk2ZXlKamIyMXdiR1Y0VG1GdFpTSTZleUptYVhKemRFNWhiV1VpT2lKR2FYSnpkRzVoYldVdFZHVnpkQ0lzSW14aGMzUk9ZVzFsSWpvaVRHRnpkRzVoYldVdFZHVnpkQ0o5TENKa1lYUmxUMlpDYVhKMGFDSTZJakU1T0RRdE1ERXRNREVpZlgwc0ltRnRiM1Z1ZENJNmV5SmxiR2wwWXpFaU9pSnVkV3hzWVNJc0ltRmthWEJwYzJsamFXNW5YelUySWpwbVlXeHpaU3dpWkdWelpYSjFiblJqTnlJNk16Y3lOemt3TVM0NE1qWXhPVEk0TnpBM0xDSmtiMnh2Y21WZk1XVm1Jam90T1RrNE9EVTFORFlzSW5CaGNtbGhkSFZ5T1dZaU9pSkVkV2x6SUcxdmJHeHBkQ0JwWkNCaGJtbHRJaXdpWTNWeWNtVnVZM2tpT2lKWVZGTWlMQ0poYlc5MWJuUWlPaUkxTURBdU5TSjlMQ0owY21GdWMyRmpkR2x2YmxSNWNHVWlPbnNpYzJObGJtRnlhVzhpT2lKVVVrRk9VMFpGVWlJc0ltbHVhWFJwWVhSdmNpSTZJbEJCV1VWU0lpd2lhVzVwZEdsaGRHOXlWSGx3WlNJNklrTlBUbE5WVFVWU0luMHNJbVY0Y0dseVlYUnBiMjRpT2lJeU1ESTFMVEExTFRJM1ZEQTBPakk0T2pRMUxqRXpORm9pZlEA',
+      },
+      conversions: {
+        payer: {
+          conversionCommitRequestId: '01JW5DK5ATZQPZ2D6310DWB0J3',
+          conversionId: '01JW5DK5ATZQPZ2D6310DWB0J3',
+          conversionRequestId: '01JW5DK5A7889YXX13TH4G6Y42',
+          conversionSettlementWindowId: 1,
+          conversionState: 'COMMITTED',
+          conversionStateChanges: [
+            {
+              conversionState: 'COMMITTED',
+              dateTime: new Date('2025-05-26T04:28:51.000Z'),
+              reason: null,
+            },
+          ],
+          conversionTerms: {
+            conversionId: '01JW5DK5ATZQPZ2D6310DWB0J3',
+            determiningTransferId: '01JW5DK5AV5YPTN3P37R27FEHJ',
+            initiatingFsp: 'ttkfxpayer',
+            counterPartyFsp: 'ttkfxp1',
+            amountType: 'RECEIVE',
+            sourceAmount: {
+              currency: 'XDR',
+              amount: 10,
+            },
+            targetAmount: {
+              currency: 'XTS',
+              amount: 500,
+            },
+            expiration: new Date('2025-12-25T13:17:10.000Z'),
+            charges: [
+              {
+                chargeType: 'string',
+                sourceAmount: {
+                  currency: 'XDR',
+                  amount: 33,
+                },
+                targetAmount: {
+                  currency: 'XTS',
+                  amount: 6000,
+                },
+              },
+            ],
+            ilpPacket:
+              'AYID1wAAAAAATF7IHGcudHRrZnhwYXllZS5tc2lzZG4uNTQzMjEwMDGCA65leUowY21GdWMyRmpkR2x2Ymtsa0lqb2lNREZLVnpWRVN6VkJWalZaVUZST00xQXpOMUl5TjBaRlNFb2lMQ0p4ZFc5MFpVbGtJam9pTURGS1Z6VkVTemRLUlVSRVFUUk9SVU5HUlVaRlVURlNNRTRpTENKd1lYbGxaU0k2ZXlKd1lYSjBlVWxrU1c1bWJ5STZleUp3WVhKMGVVbGtWSGx3WlNJNklrMVRTVk5FVGlJc0luQmhjblI1U1dSbGJuUnBabWxsY2lJNklqVTBNekl4TURBeElpd2labk53U1dRaU9pSjBkR3RtZUhCaGVXVmxJbjE5TENKd1lYbGxjaUk2ZXlKd1lYSjBlVWxrU1c1bWJ5STZleUp3WVhKMGVVbGtWSGx3WlNJNklrMVRTVk5FVGlJc0luQmhjblI1U1dSbGJuUnBabWxsY2lJNklqUTBNVEl6TkRVMk56ZzVJaXdpWm5Od1NXUWlPaUowZEd0bWVIQmhlV1Z5SW4wc0luQmxjbk52Ym1Gc1NXNW1ieUk2ZXlKamIyMXdiR1Y0VG1GdFpTSTZleUptYVhKemRFNWhiV1VpT2lKR2FYSnpkRzVoYldVdFZHVnpkQ0lzSW14aGMzUk9ZVzFsSWpvaVRHRnpkRzVoYldVdFZHVnpkQ0o5TENKa1lYUmxUMlpDYVhKMGFDSTZJakU1T0RRdE1ERXRNREVpZlgwc0ltRnRiM1Z1ZENJNmV5SmxiR2wwWXpFaU9pSnVkV3hzWVNJc0ltRmthWEJwYzJsamFXNW5YelUySWpwbVlXeHpaU3dpWkdWelpYSjFiblJqTnlJNk16Y3lOemt3TVM0NE1qWXhPVEk0TnpBM0xDSmtiMnh2Y21WZk1XVm1Jam90T1RrNE9EVTFORFlzSW5CaGNtbGhkSFZ5T1dZaU9pSkVkV2x6SUcxdmJHeHBkQ0JwWkNCaGJtbHRJaXdpWTNWeWNtVnVZM2tpT2lKWVZGTWlMQ0poYlc5MWJuUWlPaUkxTURBdU5TSjlMQ0owY21GdWMyRmpkR2x2YmxSNWNHVWlPbnNpYzJObGJtRnlhVzhpT2lKVVVrRk9VMFpGVWlJc0ltbHVhWFJwWVhSdmNpSTZJbEJCV1VWU0lpd2lhVzVwZEdsaGRHOXlWSGx3WlNJNklrTlBUbE5WVFVWU0luMHNJbVY0Y0dseVlYUnBiMjRpT2lJeU1ESTFMVEExTFRJM1ZEQTBPakk0T2pRMUxqRXpORm9pZlEA',
+          },
+          conversionType: 'PAYER_CONVERSION',
+          counterPartyFSP: 'ttkfxp1',
+          counterPartyProxy: null,
+        },
+      },
+    },
+    settlement: {
+      settlementId: 1,
+      createdAt: new Date('2025-05-26T04:38:48.000Z'),
+      lastUpdatedAt: new Date('2025-05-26T04:39:10.000Z'),
+      settlementModel: 'DEFERREDNETXXX',
+      settlementStateChange: [
+        {
+          reason: 'All settlement accounts are SETTLED',
+          status: 'SETTLED',
+          dateTime: new Date('2025-05-26T04:39:10.000Z'),
+        },
+      ],
+      settlementStatus: 'SETTLED',
+      settlementWindows: [
+        {
+          settlementWindowId: 1,
+        },
+      ],
+    },
+  },
 };

@@ -51,6 +51,7 @@ export class TransferAggregator implements IAggregator {
       dateTime: record.transferStateChangeDateTime,
       reason: record.transferStateChangeReason,
       transferState: record.transferStateChangeState,
+      transferStateEnum: record.transferStateEnum,
     };
 
     return {
@@ -64,6 +65,7 @@ export class TransferAggregator implements IAggregator {
       baseUseCase: record.baseUseCase,
       lastUpdated: record.transferStateChangeDateTime,
       transferState: stateChange ? stateChange.transferState : '',
+      transferStateEnum: stateChange ? stateChange.transferStateEnum : '',
       transferStateChanges: [stateChange],
       transactionType: record.transactionType,
       errorCode: record.errorCode,
@@ -176,6 +178,7 @@ export class TransferAggregator implements IAggregator {
             tsc.transferStateId AS transferStateChangeState,
             tsc.reason AS transferStateChangeReason,
             tsc.createdDate AS transferStateChangeDateTime,
+            ts.enumeration AS transferStateEnum,
             ts2.name as transactionType,
             te.errorCode,
             CASE WHEN da.isProxy = 0 THEN da.name ELSE ep1.name END as payerDFSP,

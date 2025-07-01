@@ -7,6 +7,7 @@ interface IAmount {
 
 interface ITransferStateChange {
   transferState: string;
+  transferStateEnum: string;
   dateTime: Date;
   reason?: string;
 }
@@ -91,6 +92,7 @@ export interface ITransaction {
   targetAmount?: number;
   targetCurrency?: string;
   transferState: string;
+  transferStateEnum: string;
   transferStateChanges: Array<ITransferStateChange>;
   transactionType: string;
   baseUseCase: string;
@@ -263,9 +265,11 @@ const TransactionSchema = new Schema<ITransaction>(
     baseUseCase: String,
     lastUpdated: Date,
     transferState: { type: String, index: true },
+    transferStateEnum: { type: String, index: true },
     transferStateChanges: [
       {
         transferState: String,
+        transferStateEnum: String,
         dateTime: Date,
         reason: String,
         _id: false,

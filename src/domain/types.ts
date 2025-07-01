@@ -42,6 +42,7 @@ export interface Record {
   currency?: string;
   transferStateChangeId: number;
   transferStateChangeState: string;
+  transferStateEnum: string;
   transferStateChangeReason?: string;
   transferStateChangeDateTime: Date;
   transactionType: string;

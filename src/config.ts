@@ -73,6 +73,12 @@ const config = convict<AppConfig>({
       default: 'admin',
       env: 'REPORTING_MONGO_DB_DATABASE',
     },
+    PARAMS: {
+      doc: 'Additional parameters for MongoDB connection',
+      format: Object,
+      default: {},
+      env: 'REPORTING_MONGO_DB_PARAMS',
+    },
   },
   BATCH_SIZE: {
     doc: 'Number of transferStateChangeIds to process per batch',

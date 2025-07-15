@@ -1,6 +1,7 @@
 import { connect } from 'mongoose';
 import config from '../config';
 import { ConnectionString } from 'connection-string';
+import { logger } from '../utils';
 
 export async function initializeMongoClient(): Promise<void> {
   const mongoConfig = config.get('REPORTING_MONGO_DB');
@@ -15,6 +16,7 @@ export async function initializeMongoClient(): Promise<void> {
   });
 
   const uri = csMongoDBObj.toString();
+  logger.info(`Connecting to MongoDB with URI: ${uri}`);
 
   await connect(uri, {
     autoIndex: false,

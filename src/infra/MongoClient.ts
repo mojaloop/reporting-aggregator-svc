@@ -3,6 +3,7 @@ import config from '../config';
 import { ConnectionString } from 'connection-string';
 
 export async function initializeMongoClient(): Promise<void> {
+  // @ts-ignore
   const mongoConfig = config.get('REPORTING_MONGO_DB');
   const csMongoDBObj = new ConnectionString();
   csMongoDBObj.setDefaults({

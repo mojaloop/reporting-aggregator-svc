@@ -16,8 +16,7 @@ export type AppConfig = {
     USER: string;
     PASSWORD: string;
     DATABASE: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    PARAMS: Record<string, any>; // Additional parameters for MongoDB connection
+    PARAMS: Record<string, unknown>; // Additional parameters for MongoDB connection
   };
   BATCH_SIZE: number;
   LOOP_TIMEOUT: number;

@@ -5,7 +5,6 @@ export function initializeMySQLClient(): Knex {
   return knex({
     client: 'mysql2',
     connection: {
-      // @ts-ignore
       host: config.get('REPORTING_MYSQL_DB.HOST'),
       port: config.get('REPORTING_MYSQL_DB.PORT'),
       user: config.get('REPORTING_MYSQL_DB.USER'),

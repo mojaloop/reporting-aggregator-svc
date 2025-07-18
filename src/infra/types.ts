@@ -17,6 +17,7 @@ export type AppConfig = {
     USER: string;
     PASSWORD: string;
     DATABASE: string;
+    PARAMS: Record<string, unknown>; // Additional parameters for MongoDB connection
   };
   BATCH_SIZE: number;
   LOOP_TIMEOUT: number;

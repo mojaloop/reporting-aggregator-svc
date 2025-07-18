@@ -1,6 +1,6 @@
 {
   "name": "reporting-aggregator-svc",
-  "version": "0.0.3-snapshot.0",
+  "version": "0.0.3",
   "private": true,
   "description": "A Mojaloop reporting service that aggregates transactional data from MySQL by joining multiple tables and composes denormalized records into MongoDB for efficient reporting",
   "author": "Ujjwal Panwar",
@@ -38,7 +38,7 @@
     "connection-string": "^4.4.0",
     "convict": "^6.2.4",
     "knex": "^3.1.0",
-    "mongoose": "^8.16.3",
+    "mongoose": "^8.16.4",
     "mysql2": "^3.14.2"
   },
   "devDependencies": {
@@ -55,7 +55,7 @@
     "eslint-config-prettier": "10.1.5",
     "eslint-plugin-import": "2.32.0",
     "husky": "^9.1.7",
-    "jest": "^30.0.0",
+    "jest": "^30.0.4",
     "jest-junit": "^16.0.0",
     "lint-staged": "^16.1.2",
     "npm-audit-resolver": "3.0.0-RC.0",

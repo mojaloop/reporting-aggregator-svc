@@ -40,6 +40,12 @@ const config = convict<AppConfig>({
       default: 'central_ledger',
       env: 'REPORTING_MYSQL_DB_SCHEMA',
     },
+    ADDITIONAL_CONNECTION_OPTIONS: {
+      doc: 'Additional options to pass to the database connection',
+      format: Object,
+      default: {},
+      env: 'REPORTING_MYSQL_DB_ADDITIONAL_CONNECTION_OPTIONS',
+    },
   },
   REPORTING_MONGO_DB: {
     HOST: {
@@ -93,6 +99,17 @@ const config = convict<AppConfig>({
     env: 'LOOP_TIMEOUT',
   },
 });
+
+if (process.env['REPORTING_MYSQL_DB_SSL_ENABLED'] === 'true') {
+  config.set('REPORTING_MYSQL_DB.ADDITIONAL_CONNECTION_OPTIONS.ssl', {
+    rejectUnauthorized: process.env['REPORTING_MYSQL_DB_SSL_VERIFY'] === 'true',
+  });
+  // Add CA certificate if environment variable is set
+  const sslCa = process.env['REPORTING_MYSQL_DB_SSL_CA'];
+  if (sslCa) {
+    config.set('REPORTING_MYSQL_DB.ADDITIONAL_CONNECTION_OPTIONS.ssl.ca', sslCa);
+  }
+}
 
 config.validate({ allowed: 'strict' });
 

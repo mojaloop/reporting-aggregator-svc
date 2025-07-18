@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.4](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.3...v0.0.4) (2025-07-18)
+
+
+### Features
+
+* **csi-1610:** add option to pass params to mongodb connection ([#3](https://github.com/mojaloop/reporting-aggregator-svc/issues/3)) ([63e450a](https://github.com/mojaloop/reporting-aggregator-svc/commit/63e450a360091f73cfff965215a99a8f2246f6a4))
+
+
+### Chore
+
+* **sbom:** update sbom [skip ci] ([652379a](https://github.com/mojaloop/reporting-aggregator-svc/commit/652379a7b888f9be484097faf11bcd1ff751db22))
+
 ### [0.0.3](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.2...v0.0.3) (2025-07-18)
 
 

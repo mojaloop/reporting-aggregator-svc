@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.3](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.2...v0.0.3) (2025-07-18)
+
+
+### Features
+
+* added mysql ssl support ([f3a5047](https://github.com/mojaloop/reporting-aggregator-svc/commit/f3a5047c65b860b7f689d50c688e5c4ec3a33ba8))
+
+
+### Chore
+
+* ci bump ([0c4b53a](https://github.com/mojaloop/reporting-aggregator-svc/commit/0c4b53a3d4ad597d60491a151c71eb3313d00513))
+* deps ([b64df3d](https://github.com/mojaloop/reporting-aggregator-svc/commit/b64df3de58ca2670405183ec40fbac96cf89d10d))
+* node upgrade ([8b67f51](https://github.com/mojaloop/reporting-aggregator-svc/commit/8b67f5143a0b7fa9b6c23e88d0af5901b42f2712))
+* **sbom:** add initial sbom ([292939e](https://github.com/mojaloop/reporting-aggregator-svc/commit/292939e989e1d71490d815e78508235c46dd1eb7))
+* update ci-config-orb-build version ([f77107d](https://github.com/mojaloop/reporting-aggregator-svc/commit/f77107d873a45bce47b37ea756d028f2285e852f))
+* update ci-config-orb-build version ([170d80b](https://github.com/mojaloop/reporting-aggregator-svc/commit/170d80b77713f14829a4101c2dbe262590599570))
+
 ### 0.0.2 (2025-06-11)
 
 

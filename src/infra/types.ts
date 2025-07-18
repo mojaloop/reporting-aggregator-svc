@@ -9,6 +9,7 @@ export type AppConfig = {
     USER: string;
     PASSWORD: string;
     SCHEMA: string;
+    ADDITIONAL_CONNECTION_OPTIONS?: Record<string, unknown>
   };
   REPORTING_MONGO_DB: {
     HOST: string;

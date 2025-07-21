@@ -81,7 +81,17 @@ const config = convict<AppConfig>({
     },
     PARAMS: {
       doc: 'Additional parameters for MongoDB connection',
-      format: Object,
+      format: function (val) {
+        if (typeof val === 'string') {
+          try {
+            JSON.parse(val);
+          } catch (e) {
+            throw new Error(`REPORTING_MONGO_DB_PARAMS must be valid JSON: ${e}`);
+          }
+        } else if (typeof val !== 'object') {
+          throw new Error('REPORTING_MONGO_DB_PARAMS must be an object or a JSON string');
+        }
+      },
       default: {},
       env: 'REPORTING_MONGO_DB_PARAMS',
     },

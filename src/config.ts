@@ -85,12 +85,14 @@ const config = convict<AppConfig>({
         if (typeof val === 'string') {
           try {
             JSON.parse(val);
+            return val;
           } catch (e) {
             throw new Error(`REPORTING_MONGO_DB_PARAMS must be valid JSON: ${e}`);
           }
         } else if (typeof val !== 'object') {
           throw new Error('REPORTING_MONGO_DB_PARAMS must be an object or a JSON string');
         }
+        return val;
       },
       default: {},
       env: 'REPORTING_MONGO_DB_PARAMS',

@@ -1,6 +1,6 @@
 {
   "name": "reporting-aggregator-svc",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": true,
   "description": "A Mojaloop reporting service that aggregates transactional data from MySQL by joining multiple tables and composes denormalized records into MongoDB for efficient reporting",
   "author": "Ujjwal Panwar",

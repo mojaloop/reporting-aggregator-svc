@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.4...v0.0.5) (2025-07-22)
+
+
+### Bug Fixes
+
+* parse if env value is provided ([#5](https://github.com/mojaloop/reporting-aggregator-svc/issues/5)) ([2a0d8e2](https://github.com/mojaloop/reporting-aggregator-svc/commit/2a0d8e2a0515aba397010c3c9845d86d88610606))
+
+
+### Chore
+
+* **sbom:** update sbom [skip ci] ([6ccd114](https://github.com/mojaloop/reporting-aggregator-svc/commit/6ccd114613eedc4c9478c433e7b87cc2fbd4796a))
+
 ### [0.0.4](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.3...v0.0.4) (2025-07-18)
 
 

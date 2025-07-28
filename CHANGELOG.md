@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.5...v0.0.6) (2025-07-28)
+
+
+### Chore
+
+* remove log line ([2728f86](https://github.com/mojaloop/reporting-aggregator-svc/commit/2728f86ffa2a3bca7e768283a716b67fa313bcd2))
+* **sbom:** update sbom [skip ci] ([bc0d9a8](https://github.com/mojaloop/reporting-aggregator-svc/commit/bc0d9a80c42182da389c3485cb792359444838df))
+
 ### [0.0.5](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.4...v0.0.5) (2025-07-22)
 
 

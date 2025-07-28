@@ -16,8 +16,6 @@ export async function initializeMongoClient(): Promise<void> {
   });
 
   const uri = csMongoDBObj.toString();
-
-  logger.debug(`Connecting to MongoDB with URI: ${uri}`);
   const safeUri = uri.replace(/(\/\/)(.*):(.*)@/, '$1****:****@');
   logger.info(`Connecting to MongoDB with URI: ${safeUri}`);
 

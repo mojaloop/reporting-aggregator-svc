@@ -18,6 +18,9 @@ export type AppConfig = {
     PASSWORD: string;
     DATABASE: string;
     PARAMS: Record<string, unknown>; // Additional parameters for MongoDB connection
+    SSL_ENABLED?: boolean; // Optional, defaults to false
+    SSL_VERIFY?: boolean; // Optional, defaults to true
+    SSL_CA?: string; // Optional, CA certificate as a string
   };
   BATCH_SIZE: number;
   LOOP_TIMEOUT: number;

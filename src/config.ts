@@ -123,6 +123,18 @@ if (process.env['REPORTING_MYSQL_DB_SSL_ENABLED'] === 'true') {
   }
 }
 
+if (process.env['REPORTING_MONGO_DB_SSL_ENABLED'] === 'true') {
+  config.set('REPORTING_MONGO_DB.SSL_ENABLED', true);
+  config.set('REPORTING_MONGO_DB.SSL_VERIFY', process.env['REPORTING_MONGO_DB_SSL_VERIFY'] === 'true');
+  // Add CA certificate if environment variable is set
+  const sslCa = process.env['REPORTING_MONGO_DB_SSL_CA'];
+  if (sslCa) {
+    config.set('REPORTING_MONGO_DB.SSL_CA', sslCa);
+  }
+} else {
+  config.set('REPORTING_MONGO_DB.SSL_ENABLED', false);
+}
+
 config.validate({ allowed: 'strict' });
 
 export default config;

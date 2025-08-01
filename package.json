@@ -38,19 +38,19 @@
     "connection-string": "^4.4.0",
     "convict": "^6.2.4",
     "knex": "^3.1.0",
-    "mongoose": "^8.16.4",
-    "mysql2": "^3.14.2"
+    "mongoose": "^8.17.0",
+    "mysql2": "^3.14.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@types/convict": "^6.1.6",
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.0.15",
+    "@types/node": "^24.1.0",
     "@typescript-eslint/eslint-plugin": "8.38.0",
     "@typescript-eslint/parser": "8.38.0",
     "audit-ci": "7.1.0",
-    "dotenv": "^17.2.0",
+    "dotenv": "^17.2.1",
     "eslint": "8.57.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-import": "2.32.0",
@@ -59,13 +59,13 @@
     "jest-junit": "^16.0.0",
     "lint-staged": "^16.1.2",
     "npm-audit-resolver": "3.0.0-RC.0",
-    "npm-check-updates": "18.0.1",
+    "npm-check-updates": "18.0.2",
     "prettier": "3.6.2",
     "replace": "^1.2.2",
     "standard-version": "^9.5.0",
     "ts-jest": "29.4.0",
     "ts-node": "10.9.2",
-    "typescript": "5.8.3"
+    "typescript": "5.9.2"
   },
   "engines": {
     "node": ">=18.x"

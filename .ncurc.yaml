@@ -2,4 +2,5 @@
 reject: [
   "eslint", # typescript-eslint v7 only supports eslint v8
   "jest", # jest 30 is released but libraries that work with jest have not been updated to support it yet.
+  "typescript" # typescript 5.9 is not compatible with some peer dependencies
 ]

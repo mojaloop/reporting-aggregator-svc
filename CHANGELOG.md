@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.7](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.6...v0.0.7) (2025-08-04)
+
+
+### Features
+
+* add option for mongodb tls support ([#6](https://github.com/mojaloop/reporting-aggregator-svc/issues/6)) ([65e0e0a](https://github.com/mojaloop/reporting-aggregator-svc/commit/65e0e0a1b9eefe25f0edc08cef72a43d5812dede))
+
 ### [0.0.6](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.5...v0.0.6) (2025-07-28)
 
 

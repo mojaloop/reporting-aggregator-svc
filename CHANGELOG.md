@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.9](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.8...v0.0.9) (2025-08-06)
+
+
+### Bug Fixes
+
+* fix mongo tls ([#8](https://github.com/mojaloop/reporting-aggregator-svc/issues/8)) ([42021c3](https://github.com/mojaloop/reporting-aggregator-svc/commit/42021c3ea592c98fbc4b3bbfb6cd74dd9107820a))
+
+
+### Chore
+
+* **sbom:** update sbom [skip ci] ([9173f3b](https://github.com/mojaloop/reporting-aggregator-svc/commit/9173f3b4911d9c81affdb7d097a028877612f4ca))
+
 ### [0.0.8](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.7...v0.0.8) (2025-08-06)
 
 

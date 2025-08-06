@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.7...v0.0.8) (2025-08-06)
+
+
+### Bug Fixes
+
+* move tls loading after validation ([#7](https://github.com/mojaloop/reporting-aggregator-svc/issues/7)) ([0492352](https://github.com/mojaloop/reporting-aggregator-svc/commit/0492352ffdd07425a621d4f31b3517c039fffb9d))
+
+
+### Chore
+
+* **sbom:** update sbom [skip ci] ([035fac9](https://github.com/mojaloop/reporting-aggregator-svc/commit/035fac9bf958a5bc3f86fcecdeac0262c54801b3))
+
 ### [0.0.7](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.6...v0.0.7) (2025-08-04)
 
 

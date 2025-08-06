@@ -28,10 +28,9 @@ export async function initializeMongoClient(): Promise<void> {
   // TLS options
   const tlsEnabled = !!mongoConfig.SSL_ENABLED;
   const tlsAllowInvalidCertificates = mongoConfig.SSL_VERIFY === false;
-  let tlsCA: Buffer | undefined = undefined;
-  if (tlsEnabled && mongoConfig.SSL_CA) {
-    // mongoConfig.SSL_CA is expected to be the contents of the CA file (string)
-    tlsCA = Buffer.from(mongoConfig.SSL_CA, 'utf-8');
+  let tlsCAFilePath: string | undefined = undefined;
+  if (tlsEnabled && mongoConfig.SSL_CA_FILE_PATH) {
+    tlsCAFilePath = mongoConfig.SSL_CA_FILE_PATH;
   }
 
   await connect(uri, {
@@ -39,6 +38,6 @@ export async function initializeMongoClient(): Promise<void> {
     dbName: mongoConfig.DATABASE,
     tls: tlsEnabled,
     tlsAllowInvalidCertificates,
-    ...(tlsCA ? { tlsCA: [tlsCA] } : {})
+    ...(tlsCAFilePath ? { tlsCAFile: tlsCAFilePath } : {})
   });
 }

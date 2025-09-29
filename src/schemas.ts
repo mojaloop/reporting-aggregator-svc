@@ -84,6 +84,13 @@ export interface IConversion {
   conversionTerms: IConversionTerms;
 }
 
+export interface ITransactionTypeDetail {
+  scenario: string;
+  subScenario: string;
+  initiator: string;
+  initiatorType: string;
+}
+
 export interface ITransaction {
   transferId: string;
   transactionId: string;
@@ -95,6 +102,7 @@ export interface ITransaction {
   transferStateEnum: string;
   transferStateChanges: Array<ITransferStateChange>;
   transactionType: string;
+  transactionTypeDetail: ITransactionTypeDetail;
   baseUseCase: string;
   errorCode?: string;
   transferSettlementWindowId?: bigint;
@@ -253,6 +261,16 @@ const ConversionSchema = new Schema<IConversion>(
   { _id: false, versionKey: false },
 );
 
+const TransactionTypeDetailSchema = new Schema<ITransactionTypeDetail>(
+  {
+    scenario: String,
+    subScenario: String,
+    initiator: String,
+    initiatorType: String,
+  },
+  { _id: false, versionKey: false },
+);
+
 const TransactionSchema = new Schema<ITransaction>(
   {
     transferId: { type: String, index: true },
@@ -276,6 +294,7 @@ const TransactionSchema = new Schema<ITransaction>(
       },
     ],
     transactionType: { type: String, index: true },
+    transactionTypeDetail: TransactionTypeDetailSchema,
     errorCode: { type: String, index: true },
     transferSettlementWindowId: Schema.Types.BigInt,
     payerDFSP: { type: String, index: true },

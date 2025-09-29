@@ -46,6 +46,9 @@ export interface Record {
   transferStateChangeReason?: string;
   transferStateChangeDateTime: Date;
   transactionType: string;
+  transactionSubScenario: string;
+  transactionInitiator: string;
+  transactionInitiatorType: string;
   errorCode?: string;
   payerDFSP?: string;
   payerDFSPProxy?: string;

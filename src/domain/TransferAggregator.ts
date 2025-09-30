@@ -68,6 +68,12 @@ export class TransferAggregator implements IAggregator {
       transferStateEnum: stateChange ? stateChange.transferStateEnum : '',
       transferStateChanges: [stateChange],
       transactionType: record.transactionType,
+      transactionTypeDetail: {
+        scenario: record.transactionType,
+        subScenario: record.transactionSubScenario,
+        initiator: record.transactionInitiator,
+        initiatorType: record.transactionInitiatorType,
+      },
       errorCode: record.errorCode,
       transferSettlementWindowId: record.transferSettlementWindowId,
       payerDFSP: record.payerDFSP,
@@ -180,6 +186,9 @@ export class TransferAggregator implements IAggregator {
             tsc.createdDate AS transferStateChangeDateTime,
             ts.enumeration AS transferStateEnum,
             ts2.name as transactionType,
+            tss.name AS transactionSubScenario,
+            ti.name AS transactionInitiator,
+            tit.name AS transactionInitiatorType,
             te.errorCode,
             CASE WHEN da.isProxy = 0 THEN da.name ELSE ep1.name END as payerDFSP,
             CASE WHEN da.isProxy = 1 THEN da.name ELSE NULL END as payerDFSPProxy,
@@ -241,6 +250,9 @@ export class TransferAggregator implements IAggregator {
             LEFT JOIN fxTransfer AS ft ON ft.determiningTransferId = transfer.transferId
             INNER JOIN quote AS q ON q.transactionReferenceId = transfer.transferId
             INNER JOIN transactionScenario AS ts2 ON ts2.transactionScenarioId = q.transactionScenarioId
+            INNER JOIN transactionSubScenario AS tss ON tss.transactionSubScenarioId = q.transactionSubScenarioId
+            INNER JOIN transactionInitiator AS ti ON ti.transactionInitiatorId = q.transactionInitiatorId
+            INNER JOIN transactionInitiatorType AS tit ON tit.transactionInitiatorTypeId = q.transactionInitiatorTypeId
             INNER JOIN quoteParty AS qp1 ON q.quoteId = qp1.quoteId AND qp1.partyTypeId = tprt1.transferParticipantRoleTypeId
             INNER JOIN quoteParty AS qp2 ON q.quoteId = qp2.quoteId AND qp2.partyTypeId = tprt2.transferParticipantRoleTypeId
             INNER JOIN partyIdentifierType AS payerpit ON payerpit.partyIdentifierTypeId = qp1.partyIdentifierTypeId

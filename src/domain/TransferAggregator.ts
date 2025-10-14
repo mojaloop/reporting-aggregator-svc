@@ -223,11 +223,7 @@ export class TransferAggregator implements IAggregator {
             tf.settlementWindowId as transferSettlementWindowId,
             gc.latitude as geoCodeLatitude,
             gc.longitude as geoCodeLongitude,
-            CASE
-              WHEN q.transactionRequestId IS NULL AND ft.commitRequestId IS NOT NULL THEN 'P2P WITH FX'
-              WHEN q.transactionRequestId IS NULL THEN 'P2P'
-              ELSE 'R2P'
-            END AS baseUseCase 
+            tss.name AS baseUseCase 
           FROM transfer
             INNER JOIN transferParticipant AS tp1 ON tp1.transferId = transfer.transferId
             LEFT JOIN externalParticipant AS ep1 ON ep1.externalParticipantId = tp1.externalParticipantId

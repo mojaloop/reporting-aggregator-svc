@@ -50,6 +50,7 @@ export interface Record {
   transactionInitiator: string;
   transactionInitiatorType: string;
   errorCode?: string;
+  errorDescription?: string;
   payerDFSP?: string;
   payerDFSPProxy?: string;
   payeeDFSP?: string;

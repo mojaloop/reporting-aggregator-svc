@@ -105,6 +105,7 @@ export interface ITransaction {
   transactionTypeDetail: ITransactionTypeDetail;
   baseUseCase: string;
   errorCode?: string;
+  errorDescription?: string;
   transferSettlementWindowId?: bigint;
   payerDFSP?: string;
   payerDFSPProxy?: string;
@@ -296,6 +297,7 @@ const TransactionSchema = new Schema<ITransaction>(
     transactionType: { type: String, index: true },
     transactionTypeDetail: TransactionTypeDetailSchema,
     errorCode: { type: String, index: true },
+    errorDescription: String,
     transferSettlementWindowId: Schema.Types.BigInt,
     payerDFSP: { type: String, index: true },
     payerDFSPProxy: { type: String, index: true },

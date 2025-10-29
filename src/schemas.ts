@@ -109,8 +109,10 @@ export interface ITransaction {
   transferSettlementWindowId?: bigint;
   payerDFSP?: string;
   payerDFSPProxy?: string;
+  payerDesc: string;
   payeeDFSP?: string;
   payeeDFSPProxy?: string;
+  payeeDesc: string;
   positionChanges: Array<IPositionChange>;
   payerParty?: IParty;
   payeeParty?: IParty;
@@ -301,8 +303,10 @@ const TransactionSchema = new Schema<ITransaction>(
     transferSettlementWindowId: Schema.Types.BigInt,
     payerDFSP: { type: String, index: true },
     payerDFSPProxy: { type: String, index: true },
+    payerDesc: String,
     payeeDFSP: { type: String, index: true },
     payeeDFSPProxy: { type: String, index: true },
+    payeeDesc: String,
     positionChanges: [
       {
         participantName: String,

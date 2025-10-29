@@ -53,8 +53,10 @@ export interface Record {
   errorDescription?: string;
   payerDFSP?: string;
   payerDFSPProxy?: string;
+  payerDesc: string;
   payeeDFSP?: string;
   payeeDFSPProxy?: string;
+  payeeDesc: string;
   payerPartyIdType?: string;
   payerPartyIdentifier?: string;
   payerPartyName?: string;

@@ -79,8 +79,10 @@ export class TransferAggregator implements IAggregator {
       transferSettlementWindowId: record.transferSettlementWindowId,
       payerDFSP: record.payerDFSP,
       payerDFSPProxy: record.payerDFSPProxy,
+      payerDesc: record.payerDesc,
       payeeDFSP: record.payeeDFSP,
       payeeDFSPProxy: record.payeeDFSPProxy,
+      payeeDesc: record.payeeDesc,
       positionChanges: record.positionChangesParticipantName
         ? [
           {
@@ -166,8 +168,6 @@ export class TransferAggregator implements IAggregator {
         }
 
         const batchTransferIds = [...new Set(transferStateChanges.map((row) => row.transferId))];
-        // @ts-expect-error{transferStateChanges is undefined}
-        let newLastId = transferStateChanges[transferStateChanges.length - 1].transferStateChangeId;
 
         const rawResult = (await this.deps.knexClient.raw(
           `
@@ -194,8 +194,10 @@ export class TransferAggregator implements IAggregator {
             te.errorDescription,
             CASE WHEN da.isProxy = 0 THEN da.name ELSE ep1.name END as payerDFSP,
             CASE WHEN da.isProxy = 1 THEN da.name ELSE NULL END as payerDFSPProxy,
+            da.description AS payerDesc,
             CASE WHEN ca.isProxy = 0 THEN ca.name ELSE ep2.name END as payeeDFSP,
             CASE WHEN ca.isProxy = 1 THEN ca.name ELSE NULL END as payeeDFSPProxy,
+            ca.description AS payeeDesc,
             payerpit.name as payerPartyIdType,
             qp1.partyIdentifierValue as payerPartyIdentifier,
             qp1.partyName as payerPartyName,
@@ -275,6 +277,7 @@ export class TransferAggregator implements IAggregator {
         )) as KnexRawResult;
 
         const records: Record[] = rawResult[0];
+        let newLastId = lastId;
 
         // If there are records
         if (records.length > 0) {
@@ -296,23 +299,29 @@ export class TransferAggregator implements IAggregator {
 
           // Run mongobatch query
           if (bulkOps.length > 0) {
+            let result;
             try {
-              await this.deps.transactionModel.bulkWrite(bulkOps);
+              result = await this.deps.transactionModel.bulkWrite(bulkOps);
             } catch (error) {
               this.deps.logger.error(`Bulk upsert failed for ${this.processName}`, error);
+              throw error;
+            }
+
+            // Only update lastId if bulkWrite happened and successful
+            const totalTrx = result.modifiedCount + result.upsertedCount;
+            if (totalTrx === bulkOps.length) {
+              await this.deps.stateModel.updateOne(
+                { process: this.processName },
+                { $set: { lastId: newLastId, updatedAt: new Date() } },
+                { upsert: true },
+              );
+              lastId = newLastId;
             }
           }
         }
 
-        // Update state id with the last Id
-        await this.deps.stateModel.updateOne(
-          { process: this.processName },
-          { $set: { lastId: newLastId, updatedAt: new Date() } },
-          { upsert: true },
-        );
-        lastId = newLastId;
-
         this.deps.logger.info(`Processed up to transferStateChangeId ${lastId}`);
+
       } catch (error) {
         this.deps.logger.error(`Error in ${this.processName}`, error);
       } finally {

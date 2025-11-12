@@ -40,6 +40,12 @@ const config = convict<AppConfig>({
       default: 'central_ledger',
       env: 'REPORTING_MYSQL_DB_SCHEMA',
     },
+    ADDITIONAL_CONNECTION_OPTIONS: {
+      doc: 'Additional options to pass to the database connection',
+      format: Object,
+      default: {},
+      env: 'REPORTING_MYSQL_DB_ADDITIONAL_CONNECTION_OPTIONS',
+    },
   },
   REPORTING_MONGO_DB: {
     HOST: {
@@ -73,6 +79,24 @@ const config = convict<AppConfig>({
       default: 'admin',
       env: 'REPORTING_MONGO_DB_DATABASE',
     },
+    PARAMS: {
+      doc: 'Additional parameters for MongoDB connection',
+      format: function (val) {
+        if (typeof val === 'string') {
+          try {
+            JSON.parse(val);
+            return val;
+          } catch (e) {
+            throw new Error(`REPORTING_MONGO_DB_PARAMS must be valid JSON: ${e}`);
+          }
+        } else if (typeof val !== 'object') {
+          throw new Error('REPORTING_MONGO_DB_PARAMS must be an object or a JSON string');
+        }
+        return val;
+      },
+      default: {},
+      env: 'REPORTING_MONGO_DB_PARAMS',
+    },
   },
   BATCH_SIZE: {
     doc: 'Number of transferStateChangeIds to process per batch',
@@ -88,6 +112,29 @@ const config = convict<AppConfig>({
   },
 });
 
+if (process.env['REPORTING_MYSQL_DB_SSL_ENABLED'] === 'true') {
+  config.set('REPORTING_MYSQL_DB.ADDITIONAL_CONNECTION_OPTIONS.ssl', {
+    rejectUnauthorized: process.env['REPORTING_MYSQL_DB_SSL_VERIFY'] === 'true',
+  });
+  // Add CA certificate if environment variable is set
+  const sslCa = process.env['REPORTING_MYSQL_DB_SSL_CA'];
+  if (sslCa) {
+    config.set('REPORTING_MYSQL_DB.ADDITIONAL_CONNECTION_OPTIONS.ssl.ca', sslCa);
+  }
+}
+
 config.validate({ allowed: 'strict' });
+
+if (process.env['REPORTING_MONGO_DB_SSL_ENABLED'] === 'true') {
+  config.set('REPORTING_MONGO_DB.SSL_ENABLED', true);
+  config.set('REPORTING_MONGO_DB.SSL_VERIFY', process.env['REPORTING_MONGO_DB_SSL_VERIFY'] === 'true');
+  // Add CA certificate if environment variable is set
+  const sslCa = process.env['REPORTING_MONGO_DB_SSL_CA_FILE_PATH'];
+  if (sslCa) {
+    config.set('REPORTING_MONGO_DB.SSL_CA_FILE_PATH', sslCa);
+  }
+} else {
+  config.set('REPORTING_MONGO_DB.SSL_ENABLED', false);
+}
 
 export default config;

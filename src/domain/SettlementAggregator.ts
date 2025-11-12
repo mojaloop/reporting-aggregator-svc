@@ -108,7 +108,7 @@ export class SettlementAggregator implements IAggregator {
         const windowQuery = `
           SELECT 
             s.settlementId as settlementId,
-            ssw.settlementSettlementWindowId as settlementWindowId
+            ssw.settlementWindowId 
           FROM settlement s
           JOIN settlementSettlementWindow ssw ON ssw.settlementId = s.settlementId
           WHERE s.settlementId = ?

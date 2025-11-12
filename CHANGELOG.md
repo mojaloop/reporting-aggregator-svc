@@ -2,6 +2,86 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.9](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.8...v0.0.9) (2025-08-06)
+
+
+### Bug Fixes
+
+* fix mongo tls ([#8](https://github.com/mojaloop/reporting-aggregator-svc/issues/8)) ([42021c3](https://github.com/mojaloop/reporting-aggregator-svc/commit/42021c3ea592c98fbc4b3bbfb6cd74dd9107820a))
+
+
+### Chore
+
+* **sbom:** update sbom [skip ci] ([9173f3b](https://github.com/mojaloop/reporting-aggregator-svc/commit/9173f3b4911d9c81affdb7d097a028877612f4ca))
+
+### [0.0.8](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.7...v0.0.8) (2025-08-06)
+
+
+### Bug Fixes
+
+* move tls loading after validation ([#7](https://github.com/mojaloop/reporting-aggregator-svc/issues/7)) ([0492352](https://github.com/mojaloop/reporting-aggregator-svc/commit/0492352ffdd07425a621d4f31b3517c039fffb9d))
+
+
+### Chore
+
+* **sbom:** update sbom [skip ci] ([035fac9](https://github.com/mojaloop/reporting-aggregator-svc/commit/035fac9bf958a5bc3f86fcecdeac0262c54801b3))
+
+### [0.0.7](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.6...v0.0.7) (2025-08-04)
+
+
+### Features
+
+* add option for mongodb tls support ([#6](https://github.com/mojaloop/reporting-aggregator-svc/issues/6)) ([65e0e0a](https://github.com/mojaloop/reporting-aggregator-svc/commit/65e0e0a1b9eefe25f0edc08cef72a43d5812dede))
+
+### [0.0.6](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.5...v0.0.6) (2025-07-28)
+
+
+### Chore
+
+* remove log line ([2728f86](https://github.com/mojaloop/reporting-aggregator-svc/commit/2728f86ffa2a3bca7e768283a716b67fa313bcd2))
+* **sbom:** update sbom [skip ci] ([bc0d9a8](https://github.com/mojaloop/reporting-aggregator-svc/commit/bc0d9a80c42182da389c3485cb792359444838df))
+
+### [0.0.5](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.4...v0.0.5) (2025-07-22)
+
+
+### Bug Fixes
+
+* parse if env value is provided ([#5](https://github.com/mojaloop/reporting-aggregator-svc/issues/5)) ([2a0d8e2](https://github.com/mojaloop/reporting-aggregator-svc/commit/2a0d8e2a0515aba397010c3c9845d86d88610606))
+
+
+### Chore
+
+* **sbom:** update sbom [skip ci] ([6ccd114](https://github.com/mojaloop/reporting-aggregator-svc/commit/6ccd114613eedc4c9478c433e7b87cc2fbd4796a))
+
+### [0.0.4](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.3...v0.0.4) (2025-07-18)
+
+
+### Features
+
+* **csi-1610:** add option to pass params to mongodb connection ([#3](https://github.com/mojaloop/reporting-aggregator-svc/issues/3)) ([63e450a](https://github.com/mojaloop/reporting-aggregator-svc/commit/63e450a360091f73cfff965215a99a8f2246f6a4))
+
+
+### Chore
+
+* **sbom:** update sbom [skip ci] ([652379a](https://github.com/mojaloop/reporting-aggregator-svc/commit/652379a7b888f9be484097faf11bcd1ff751db22))
+
+### [0.0.3](https://github.com/mojaloop/reporting-aggregator-svc/compare/v0.0.2...v0.0.3) (2025-07-18)
+
+
+### Features
+
+* added mysql ssl support ([f3a5047](https://github.com/mojaloop/reporting-aggregator-svc/commit/f3a5047c65b860b7f689d50c688e5c4ec3a33ba8))
+
+
+### Chore
+
+* ci bump ([0c4b53a](https://github.com/mojaloop/reporting-aggregator-svc/commit/0c4b53a3d4ad597d60491a151c71eb3313d00513))
+* deps ([b64df3d](https://github.com/mojaloop/reporting-aggregator-svc/commit/b64df3de58ca2670405183ec40fbac96cf89d10d))
+* node upgrade ([8b67f51](https://github.com/mojaloop/reporting-aggregator-svc/commit/8b67f5143a0b7fa9b6c23e88d0af5901b42f2712))
+* **sbom:** add initial sbom ([292939e](https://github.com/mojaloop/reporting-aggregator-svc/commit/292939e989e1d71490d815e78508235c46dd1eb7))
+* update ci-config-orb-build version ([f77107d](https://github.com/mojaloop/reporting-aggregator-svc/commit/f77107d873a45bce47b37ea756d028f2285e852f))
+* update ci-config-orb-build version ([170d80b](https://github.com/mojaloop/reporting-aggregator-svc/commit/170d80b77713f14829a4101c2dbe262590599570))
+
 ### 0.0.2 (2025-06-11)
 
 

@@ -9,6 +9,7 @@ export type AppConfig = {
     USER: string;
     PASSWORD: string;
     SCHEMA: string;
+    ADDITIONAL_CONNECTION_OPTIONS?: Record<string, unknown>
   };
   REPORTING_MONGO_DB: {
     HOST: string;
@@ -16,6 +17,10 @@ export type AppConfig = {
     USER: string;
     PASSWORD: string;
     DATABASE: string;
+    PARAMS: Record<string, unknown>; // Additional parameters for MongoDB connection
+    SSL_ENABLED?: boolean; // Optional, defaults to false
+    SSL_VERIFY?: boolean; // Optional, defaults to true
+    SSL_CA_FILE_PATH?: string; // Optional, CA certificate file path
   };
   BATCH_SIZE: number;
   LOOP_TIMEOUT: number;

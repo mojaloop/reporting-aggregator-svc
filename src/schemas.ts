@@ -7,6 +7,7 @@ interface IAmount {
 
 interface ITransferStateChange {
   transferState: string;
+  transferStateEnum: string;
   dateTime: Date;
   reason?: string;
 }
@@ -83,6 +84,13 @@ export interface IConversion {
   conversionTerms: IConversionTerms;
 }
 
+export interface ITransactionTypeDetail {
+  scenario: string;
+  subScenario: string;
+  initiator: string;
+  initiatorType: string;
+}
+
 export interface ITransaction {
   transferId: string;
   transactionId: string;
@@ -91,15 +99,20 @@ export interface ITransaction {
   targetAmount?: number;
   targetCurrency?: string;
   transferState: string;
+  transferStateEnum: string;
   transferStateChanges: Array<ITransferStateChange>;
   transactionType: string;
+  transactionTypeDetail: ITransactionTypeDetail;
   baseUseCase: string;
   errorCode?: string;
+  errorDescription?: string;
   transferSettlementWindowId?: bigint;
   payerDFSP?: string;
   payerDFSPProxy?: string;
+  payerDesc: string;
   payeeDFSP?: string;
   payeeDFSPProxy?: string;
+  payeeDesc: string;
   positionChanges: Array<IPositionChange>;
   payerParty?: IParty;
   payeeParty?: IParty;
@@ -251,6 +264,16 @@ const ConversionSchema = new Schema<IConversion>(
   { _id: false, versionKey: false },
 );
 
+const TransactionTypeDetailSchema = new Schema<ITransactionTypeDetail>(
+  {
+    scenario: String,
+    subScenario: String,
+    initiator: String,
+    initiatorType: String,
+  },
+  { _id: false, versionKey: false },
+);
+
 const TransactionSchema = new Schema<ITransaction>(
   {
     transferId: { type: String, index: true },
@@ -263,21 +286,27 @@ const TransactionSchema = new Schema<ITransaction>(
     baseUseCase: String,
     lastUpdated: Date,
     transferState: { type: String, index: true },
+    transferStateEnum: { type: String, index: true },
     transferStateChanges: [
       {
         transferState: String,
+        transferStateEnum: String,
         dateTime: Date,
         reason: String,
         _id: false,
       },
     ],
     transactionType: { type: String, index: true },
+    transactionTypeDetail: TransactionTypeDetailSchema,
     errorCode: { type: String, index: true },
+    errorDescription: String,
     transferSettlementWindowId: Schema.Types.BigInt,
     payerDFSP: { type: String, index: true },
     payerDFSPProxy: { type: String, index: true },
+    payerDesc: String,
     payeeDFSP: { type: String, index: true },
     payeeDFSPProxy: { type: String, index: true },
+    payeeDesc: String,
     positionChanges: [
       {
         participantName: String,

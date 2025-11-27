@@ -51,6 +51,7 @@ export class TransferAggregator implements IAggregator {
       dateTime: record.transferStateChangeDateTime,
       reason: record.transferStateChangeReason,
       transferState: record.transferStateChangeState,
+      transferStateEnum: record.transferStateEnum,
     };
 
     return {
@@ -64,14 +65,24 @@ export class TransferAggregator implements IAggregator {
       baseUseCase: record.baseUseCase,
       lastUpdated: record.transferStateChangeDateTime,
       transferState: stateChange ? stateChange.transferState : '',
+      transferStateEnum: stateChange ? stateChange.transferStateEnum : '',
       transferStateChanges: [stateChange],
       transactionType: record.transactionType,
+      transactionTypeDetail: {
+        scenario: record.transactionType,
+        subScenario: record.transactionSubScenario,
+        initiator: record.transactionInitiator,
+        initiatorType: record.transactionInitiatorType,
+      },
       errorCode: record.errorCode,
+      errorDescription: record.errorDescription,
       transferSettlementWindowId: record.transferSettlementWindowId,
       payerDFSP: record.payerDFSP,
       payerDFSPProxy: record.payerDFSPProxy,
+      payerDesc: record.payerDesc,
       payeeDFSP: record.payeeDFSP,
       payeeDFSPProxy: record.payeeDFSPProxy,
+      payeeDesc: record.payeeDesc,
       positionChanges: record.positionChangesParticipantName
         ? [
           {
@@ -176,12 +187,19 @@ export class TransferAggregator implements IAggregator {
             tsc.transferStateId AS transferStateChangeState,
             tsc.reason AS transferStateChangeReason,
             tsc.createdDate AS transferStateChangeDateTime,
+            ts.enumeration AS transferStateEnum,
             ts2.name as transactionType,
+            tss.name AS transactionSubScenario,
+            ti.name AS transactionInitiator,
+            tit.name AS transactionInitiatorType,
             te.errorCode,
+            te.errorDescription,
             CASE WHEN da.isProxy = 0 THEN da.name ELSE ep1.name END as payerDFSP,
             CASE WHEN da.isProxy = 1 THEN da.name ELSE NULL END as payerDFSPProxy,
+            da.description AS payerDesc,
             CASE WHEN ca.isProxy = 0 THEN ca.name ELSE ep2.name END as payeeDFSP,
             CASE WHEN ca.isProxy = 1 THEN ca.name ELSE NULL END as payeeDFSPProxy,
+            ca.description AS payeeDesc,
             payerpit.name as payerPartyIdType,
             qp1.partyIdentifierValue as payerPartyIdentifier,
             qp1.partyName as payerPartyName,
@@ -211,11 +229,7 @@ export class TransferAggregator implements IAggregator {
             tf.settlementWindowId as transferSettlementWindowId,
             gc.latitude as geoCodeLatitude,
             gc.longitude as geoCodeLongitude,
-            CASE
-              WHEN q.transactionRequestId IS NULL AND ft.commitRequestId IS NOT NULL THEN 'P2P WITH FX'
-              WHEN q.transactionRequestId IS NULL THEN 'P2P'
-              ELSE 'R2P'
-            END AS baseUseCase 
+            tss.name AS baseUseCase 
           FROM transfer
             INNER JOIN transferParticipant AS tp1 ON tp1.transferId = transfer.transferId
             LEFT JOIN externalParticipant AS ep1 ON ep1.externalParticipantId = tp1.externalParticipantId
@@ -238,6 +252,9 @@ export class TransferAggregator implements IAggregator {
             LEFT JOIN fxTransfer AS ft ON ft.determiningTransferId = transfer.transferId
             INNER JOIN quote AS q ON q.transactionReferenceId = transfer.transferId
             INNER JOIN transactionScenario AS ts2 ON ts2.transactionScenarioId = q.transactionScenarioId
+            INNER JOIN transactionSubScenario AS tss ON tss.transactionSubScenarioId = q.transactionSubScenarioId
+            INNER JOIN transactionInitiator AS ti ON ti.transactionInitiatorId = q.transactionInitiatorId
+            INNER JOIN transactionInitiatorType AS tit ON tit.transactionInitiatorTypeId = q.transactionInitiatorTypeId
             INNER JOIN quoteParty AS qp1 ON q.quoteId = qp1.quoteId AND qp1.partyTypeId = tprt1.transferParticipantRoleTypeId
             INNER JOIN quoteParty AS qp2 ON q.quoteId = qp2.quoteId AND qp2.partyTypeId = tprt2.transferParticipantRoleTypeId
             INNER JOIN partyIdentifierType AS payerpit ON payerpit.partyIdentifierTypeId = qp1.partyIdentifierTypeId
@@ -283,6 +300,7 @@ export class TransferAggregator implements IAggregator {
               await this.deps.transactionModel.bulkWrite(bulkOps);
             } catch (error) {
               this.deps.logger.error(`Bulk upsert failed for ${this.processName}`, error);
+              throw error;
             }
           }
         }
